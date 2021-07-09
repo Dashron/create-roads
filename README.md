@@ -4,7 +4,7 @@ An initalizer package for a roads project (replaces roads starter)
 
 
 # TODO
-1. Create an init script that creates exactly the roads example
+1. Wrap up roads example script (500 on client side js)
 2. Create an init script that creates exactly the roads-api example
 3. Add config support
 4. Add logger support

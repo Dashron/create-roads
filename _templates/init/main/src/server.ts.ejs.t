@@ -1,3 +1,6 @@
+---
+to: src/server.ts
+---
 /**
  * server.ts
  * Copyright(c) 2021 Aaron Hedges <aaron@dashron.com>
@@ -11,8 +14,8 @@ import { Road, Response, RemoveTrailingSlashMiddleware, CookieMiddleware,
 
 import { Server } from 'roads-server';
 import addLayout from './middleware/addLayout';
-import applyPublicRotues from './publicRoutes/applyPublicRoutes';
-import applyPrivateRoutes from './privateRoutes/applyPrivateRoutes';
+import applyPublicRotues from './publicRoutes/applyRoutes';
+import applyPrivateRoutes from './privateRoutes/applyRoutes';
 import emptyTo404 from './middleware/emptyTo404';
 
 const road = new Road();

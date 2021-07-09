@@ -1,5 +1,5 @@
 ---
-to: src/package.json
+to: package.json
 ---
 {
   "name": "",
@@ -13,9 +13,11 @@ to: src/package.json
   "devDependencies": {},
   "dependencies": {
     "@types/browserify": "^12.0.36",
+	"@types/cookie": "^0.4.1",
     "@types/watchify": "^3.11.0",
     "brfs": "2.0.2",
     "browserify": "^17.0.0",
+	"cookie": "^0.4.1",
     "roads": "7.0.0-alpha.3",
     "roads-server": "1.0.3",
     "watchify": "^4.0.0"
