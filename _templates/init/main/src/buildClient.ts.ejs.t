@@ -16,8 +16,14 @@ import * as fs from 'fs';
 // Read this file
 const inputFile = `${ __dirname }/client.js`;
 
-// Write to this file
-const outputFile = `${ __dirname }/../browser/client.brws.js`;
+// Create the output dir if it doesn't exist
+const outputDir = `${ __dirname }/../browser`;
+if (!fs.existsSync(outputDir)) {
+	fs.mkdirSync(outputDir);
+}
+
+// Output to this file
+const outputFile = `${outputDir}/client.brws.js`;
 
 // Look for the watch flag
 const watch = process.argv[2] === '--watch';
