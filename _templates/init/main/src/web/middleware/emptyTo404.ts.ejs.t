@@ -1,5 +1,5 @@
 ---
-to: src/middleware/emptyTo404.ts
+to: src/web/middleware/emptyTo404.ts
 ---
 /**
  * emptyTo404.ts

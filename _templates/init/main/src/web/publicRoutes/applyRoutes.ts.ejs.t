@@ -1,5 +1,5 @@
 ---
-to: src/publicRoutes/applyRoutes.ts
+to: src/web/publicRoutes/applyRoutes.ts
 ---
 /**
  * applyRoutes.ts

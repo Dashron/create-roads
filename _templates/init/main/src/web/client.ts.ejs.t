@@ -1,5 +1,5 @@
 ---
-to: src/client.ts
+to: src/web/client.ts
 ---
 /**
  * client.ts

@@ -1,5 +1,5 @@
 ---
-to: src/buildClient.ts
+to: src/web/buildClient.ts
 ---
 /**
  * build.ts
@@ -17,7 +17,7 @@ import * as fs from 'fs';
 const inputFile = `${ __dirname }/client.js`;
 
 // Create the output dir if it doesn't exist
-const outputDir = `${ __dirname }/../browser`;
+const outputDir = `${ __dirname }/../../browser`;
 if (!fs.existsSync(outputDir)) {
 	fs.mkdirSync(outputDir);
 }
