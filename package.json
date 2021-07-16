@@ -4,7 +4,8 @@
   "description": "A system for setting up your first roads project",
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+	"build-example": "(cd ./exampleOutput && node ../dist/init.js)"
   },
   "repository": {
     "type": "git",
@@ -30,7 +31,10 @@
   "dependencies": {
     "enquirer": "^2.3.6",
     "execa": "^5.0.0",
-    "hygen": "^6.0.4"
+    "hygen": "^6.0.4",
+    "jsonwebtoken": "^8.5.1",
+    "roads-api": "^2.0.0-alpha.1",
+    "sequelize": "^6.6.5"
   },
   "bin": {
     "create-roads": "dist/init.js"

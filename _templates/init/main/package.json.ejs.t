@@ -20,7 +20,8 @@ to: package.json
 	"cookie": "^0.4.1",
     "roads": "7.0.0-alpha.3",
     "roads-server": "1.0.3",
-    "watchify": "^4.0.0"
+    "watchify": "^4.0.0",
+	"sequelize": "^6.6.5",
   },
   "private": true,
   "scripts": {
