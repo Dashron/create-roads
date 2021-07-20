@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-	"build-example": "(cd ./exampleOutput && node ../dist/init.js)"
+    "build-example": "(cd ./exampleOutput && node ../dist/init.js)"
   },
   "repository": {
     "type": "git",
@@ -34,6 +34,7 @@
     "hygen": "^6.0.4",
     "jsonwebtoken": "^8.5.1",
     "roads-api": "^2.0.0-alpha.1",
+    "roads-server": "^1.0.3",
     "sequelize": "^6.6.5"
   },
   "bin": {
