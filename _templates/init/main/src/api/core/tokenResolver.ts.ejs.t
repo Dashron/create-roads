@@ -1,10 +1,17 @@
+---
+to: src/api/core/tokenResolver.ts
+---
 import * as jwt from 'jsonwebtoken';
 import { Sequelize } from 'sequelize/types';
 import { Logger } from '../../logger';
-import { APIProjectConfig, TokenResolver } from './apiProject';
+import { User } from '../resources/users/userModel';
+import { APIProjectConfig } from './apiProject';
+import { TokenResolver } from './starterResource';
+
+export type AuthFormat = User | boolean;
 
 export default (sequelize: Sequelize, logger: Logger, config: APIProjectConfig ): TokenResolver => {
-	return async function (token: string): Promise<unknown> {
+	return async function (token: string): Promise<User> {
 		try {
 			const decoded = jwt.verify(token, config.secret, {
 				algorithms: ['HS256']

@@ -12,6 +12,7 @@ to: package.json
   "description": "",
   "devDependencies": {},
   "dependencies": {
+	"ajv": "8.6.2",
     "@types/browserify": "^12.0.36",
 	"@types/cookie": "^0.4.1",
     "@types/watchify": "^3.11.0",
@@ -21,7 +22,7 @@ to: package.json
     "roads": "7.0.0-alpha.3",
     "roads-server": "1.0.3",
     "watchify": "^4.0.0",
-	"sequelize": "^6.6.5",
+	"sequelize": "^6.6.5"
   },
   "private": true,
   "scripts": {

@@ -1,13 +1,16 @@
 import { Resource } from 'roads-api';
 import { Sequelize } from 'sequelize/types';
 import { Logger } from '../../logger';
-import { APIProjectConfig, TokenResolver } from './apiProject';
+import { User } from '../resources/users/userModel';
+
+export type TokenResolver = (token: string) => Promise<User>;
+export type StarterResourceConfig = { [key: string]: unknown };
 
 export type StarterResourceConstructor<RepresentationFormat, Models, Auth> = {
 	new(dbConnection: Sequelize,
 		logger: Logger,
 		tokenResolver: TokenResolver,
-		config: APIProjectConfig): StarterResource<RepresentationFormat, Models, Auth>
+		config: StarterResourceConfig): StarterResource<RepresentationFormat, Models, Auth>
 }
 
 export default abstract class StarterResource<RepresentationFormat, Models, Auth> extends
@@ -16,9 +19,9 @@ export default abstract class StarterResource<RepresentationFormat, Models, Auth
 	protected dbConnection: Sequelize
 	protected logger: Logger;
 	protected tokenResolver: TokenResolver;
-	protected config: APIProjectConfig;
+	protected config: StarterResourceConfig;
 
-	constructor(dbConnection: Sequelize, logger: Logger, tokenResolver: TokenResolver, config: APIProjectConfig) {
+	constructor(dbConnection: Sequelize, logger: Logger, tokenResolver: TokenResolver, config: StarterResourceConfig) {
 		super();
 
 		this.dbConnection = dbConnection;

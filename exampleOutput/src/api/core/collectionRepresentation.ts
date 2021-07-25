@@ -1,5 +1,3 @@
-
-// import { SomeJSONSchema } from 'ajv/dist/types/json-schema';
 import JSONRepresentation, { ResolveArrayItems } from 'roads-api/types/Representation/jsonRepresentation';
 
 export interface Collection<item> {

@@ -9,21 +9,21 @@
   "description": "",
   "devDependencies": {},
   "dependencies": {
+	"ajv": "8.6.2",
     "@types/browserify": "^12.0.36",
-    "@types/cookie": "^0.4.1",
+	"@types/cookie": "^0.4.1",
     "@types/watchify": "^3.11.0",
     "brfs": "2.0.2",
     "browserify": "^17.0.0",
-    "cookie": "^0.4.1",
-    "json-pointer": "^0.6.1",
+	"cookie": "^0.4.1",
     "roads": "7.0.0-alpha.3",
     "roads-server": "1.0.3",
-    "sequelize": "^6.6.5",
-    "watchify": "^4.0.0"
+    "watchify": "^4.0.0",
+	"sequelize": "^6.6.5"
   },
   "private": true,
   "scripts": {
     "start": "tsc && node dist/node/server.js",
-    "build": "tsc && node dist/node/buildClient.js"
+	"build": "tsc && node dist/node/buildClient.js"
   }
 }

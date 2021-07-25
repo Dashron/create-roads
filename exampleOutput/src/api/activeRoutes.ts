@@ -1,6 +1,3 @@
----
-to: src/api/activeRoutes.ts
----
 import APIProject from './core/apiProject';
 import * as exampleAPI from '../resources/example/index';
 import * as usersAPI from '../resources/users/index';

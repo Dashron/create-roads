@@ -1,7 +1,11 @@
+---
+to: src/api/core/resourceDefaults.ts
+---
 import { ActionConfig, AuthScheme } from 'roads-api/types/Resource/resource';
 import { JSONRepresentation } from 'roads-api';
 import { HTTPErrors, CONSTANTS } from 'roads-api';
 import CollectionRepresentation from './collectionRepresentation';
+import { ResolveArrayItems } from 'roads-api/types/Representation/jsonRepresentation';
 const { NotFoundError } = HTTPErrors;
 const { MEDIA_JSON, MEDIA_JSON_MERGE, AUTH_BEARER } = CONSTANTS;
 
@@ -47,12 +51,13 @@ export function buildGetConfig<RepresentationFormat, Models, Auth> (tokenResolve
 
 export function buildGetListConfig<RepresentationFormat, Models, Auth> (tokenResolver: AuthScheme<Auth>,
 	representationConstructor: JSONRepresentationConstructor<RepresentationFormat, Models, Auth>,
-	collectionItemsResolver: (models: Models, auth: Auth) => Array<RepresentationFormat>): ActionConfig {
+	collectionItemsResolver: ResolveArrayItems): ActionConfig {
 
 	return {
 		authSchemes: { [AUTH_BEARER]: tokenResolver },
 		responseMediaTypes: {
-			[MEDIA_JSON]: new CollectionRepresentation<RepresentationFormat>('get', new representationConstructor('get'), collectionItemsResolver)
+			[MEDIA_JSON]: new CollectionRepresentation<RepresentationFormat, Models, Auth>('get',
+				new representationConstructor('get'), collectionItemsResolver)
 		},
 		authRequired: true,
 		defaultRequestMediaType: MEDIA_JSON,
@@ -64,11 +69,10 @@ export function buildGetListConfig<RepresentationFormat, Models, Auth> (tokenRes
  * PARTIAL EDIT REQUESTS
  */
 export async function partialEditFn<RepresentationFormat, Models, Auth> (
-	models: {
-	save: () => Promise<unknown>
-},
-	requestBody: unknown,
-	requestMediaHandler: JSONRepresentation<RepresentationFormat, Models, Auth>, auth: unknown): Promise<unknown> {
+	// I don't think this is the right way to define this. TODO
+	models: Models & { save: () => any },
+	requestBody: RepresentationFormat,
+	requestMediaHandler: JSONRepresentation<RepresentationFormat, Models, Auth>, auth: Auth): Promise<unknown> {
 	if (auth) {
 		requestMediaHandler.applyEdit(requestBody, models, auth);
 		return models.save();
@@ -113,13 +117,13 @@ export function buildFullReplaceConfig(tokenResolver: TokenResolver,
  * APPEND
  */
 export async function appendFn<RepresentationFormat, Models, Auth> (
-	models: {
+	models: Models & {
 		ownerId: number,
 		active: number,
 		save: () => Promise<unknown>
-	}, requestBody: unknown,
+	}, requestBody: RepresentationFormat,
 	requestMediaHandler: JSONRepresentation<RepresentationFormat, Models, Auth>,
-	auth: { id: number }): Promise<unknown> {
+	auth: Auth & { id: number }): Promise<unknown> {
 
 	await requestMediaHandler.applyEdit(requestBody, models, auth);
 	models.ownerId = auth.id;
@@ -127,11 +131,14 @@ export async function appendFn<RepresentationFormat, Models, Auth> (
 	return models.save();
 }
 
-export async function appendFnNoActivation<RepresentationFormat, Models, Auth> (models: {
-	ownerId: number,
-	save: () => Promise<unknown>
-}, requestBody: unknown,
-requestMediaHandler: JSONRepresentation<RepresentationFormat, Models, Auth>, auth: { id : number }): Promise<unknown> {
+export async function appendFnNoActivation<RepresentationFormat, Models, Auth> (
+	models: Models & {
+		ownerId: number,
+		save: () => Promise<unknown>
+	},
+	requestBody: RepresentationFormat,
+	requestMediaHandler: JSONRepresentation<RepresentationFormat, Models, Auth>,
+	auth: Auth & { id : number }): Promise<unknown> {
 
 	await requestMediaHandler.applyEdit(requestBody, models, auth);
 	models.ownerId = auth.id;
@@ -175,15 +182,18 @@ export async function hardDeleteFn<RepresentationFormat, Models, Auth> (
 	models: {
 		ownerId: number,
 		destroy(options: {force: boolean}): Promise<unknown>
-	}, requestBody: unknown,
-	requestMediaHandler: JSONRepresentation<RepresentationFormat, Models, Auth>, auth: { id: number }): Promise<unknown> {
+	},
+	requestBody: unknown,
+	requestMediaHandler: JSONRepresentation<RepresentationFormat, Models, Auth>,
+	auth: { id: number }): Promise<unknown> {
 
 	if (models.ownerId == auth.id) {
 		return models.destroy({force: true});
 	}
 }
 
-export function buildDeleteConfig<RepresentationFormat, Models, Auth>(tokenResolver: AuthScheme<Auth>,
+export function buildDeleteConfig<RepresentationFormat, Models, Auth>(
+	tokenResolver: AuthScheme<Auth>,
 	representationConstructor: JSONRepresentationConstructor<RepresentationFormat, Models, Auth>): ActionConfig {
 
 	return {

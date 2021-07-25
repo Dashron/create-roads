@@ -15,6 +15,7 @@
                 "src/types/*"
             ]
         },
+		"types": ["node"],
         "allowSyntheticDefaultImports": true,
         "declaration": true,
         "declarationDir": "./types"

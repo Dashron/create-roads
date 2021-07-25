@@ -1,9 +1,6 @@
-'use strict';
-
 import { Router } from 'roads-api';
 import { Server } from 'roads-server';
 import { Sequelize } from 'sequelize';
-import UserResource from './users/userResource';
 import * as fs from 'fs';
 
 import {
@@ -12,10 +9,10 @@ import {
 	Middleware
 } from 'roads';
 
-import { Logger } from '../index';
+import { Logger } from '../../logger';
 import { StarterResourceConstructor } from './starterResource';
 
-function hasAllKeys(check: object, keys: Array<string>) {
+function hasAllKeys(check: {[x: string]: unknown}, keys: Array<string>) {
 	if (!check) {
 		return false;
 	}
@@ -54,7 +51,7 @@ export interface APIProjectConfig {
 	secret: string
 }
 
-export type TokenResolver = (token: string) => Promise<any>;
+
 
 export default class APIProject {
 	protected road: Road;
@@ -118,30 +115,12 @@ export default class APIProject {
 	}
 
 	addResource(path: string, resource: StarterResourceConstructor, templateSchema?: any) {
-		this.router.addResource(path, new resource(this.connection, this.logger, this.tokenResolver, this.config), templateSchema);
+		this.router.addResource(path,
+			new resource(this.connection, this.logger, this.tokenResolver, this.config), templateSchema);
 	}
 
 	addTokenResolver(resolverBuilder: (connection: Sequelize, logger: Logger, config: APIProjectConfig) => TokenResolver) {
 		this.tokenResolver = resolverBuilder(this.connection, this.logger, this.config);
-	}
-
-	addRoadsUserEndpoints() {
-		if (!hasAllKeys(this.config, ['secret', 'cognitoUrl'])) {
-			throw new Error('Mising config key.');
-		}
-
-		this.addModel('./users/userModel.js');
-
-		this.addResource('/users/{remote_id}', UserResource, {
-			urlParams: {
-				schema: {
-					remote_id: {
-						type: 'string'
-					}
-				},
-				required: ['remote_id']
-			}
-		});
 	}
 
 	start() {
