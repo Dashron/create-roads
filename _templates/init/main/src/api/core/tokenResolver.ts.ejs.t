@@ -8,10 +8,10 @@ import { User } from '../resources/users/userModel';
 import { APIProjectConfig } from './apiProject';
 import { TokenResolver } from './starterResource';
 
-export type AuthFormat = User | boolean;
+export type AuthFormat = User | false;
 
-export default (sequelize: Sequelize, logger: Logger, config: APIProjectConfig ): TokenResolver => {
-	return async function (token: string): Promise<User> {
+export default (sequelize: Sequelize, logger: Logger, config: APIProjectConfig ): TokenResolver<AuthFormat> => {
+	return async function (token: string): Promise<AuthFormat> {
 		try {
 			const decoded = jwt.verify(token, config.secret, {
 				algorithms: ['HS256']
@@ -22,16 +22,17 @@ export default (sequelize: Sequelize, logger: Logger, config: APIProjectConfig )
 					where: {
 						remoteId: decoded.val
 					}
-				});
+					// TODO: There's got to be a better way to do this
+				}) as User;
 
 				if (user) {
 					return user;
 				}
-
-				return false;
 			}
 		} catch (e) {
 			return false;
 		}
+
+		return false;
 	};
 };

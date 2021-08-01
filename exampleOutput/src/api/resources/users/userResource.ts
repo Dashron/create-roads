@@ -1,27 +1,31 @@
 import { User } from './userModel';
-import { WritableRepresentation } from 'roads-api/types/Representation/representation';
 import { ParsedURLParams, ActionList } from 'roads-api/types/Resource/resource';
-import { Resource, HTTPErrors, CONSTANTS } from 'roads-api';
-import { Request } from 'roads';
+import { HTTPErrors, CONSTANTS } from 'roads-api';
 import { Sequelize } from 'sequelize/types';
 import UserRepresentation from './userRepresentation';
 import { Logger } from '../../../logger';
-import { APIProjectConfig } from '../apiProject';
-import StarterResource from '../../core/starterResource';
+import StarterResource, { TokenResolver } from '../../core/starterResource';
+import { AuthFormat } from '../../core/tokenResolver';
+import { APIConfig } from '../../server';
 
-const { NotFoundError, InvalidRequestError, ForbiddenError } = HTTPErrors;
+const { NotFoundError, ForbiddenError } = HTTPErrors;
 const { MEDIA_JSON, MEDIA_JSON_MERGE, AUTH_BEARER } = CONSTANTS;
 
 
-export default class UserResource extends StarterResource {
-	constructor(dbConnection: Sequelize, logger: Logger, tokenResolver: Function, config: APIProjectConfig) {
+export default class UserResource extends StarterResource<UserRepresentation, User, AuthFormat> {
+	constructor(dbConnection: Sequelize,
+		logger: Logger,
+		tokenResolver: TokenResolver<AuthFormat>,
+		config: APIConfig) {
+
 		super(dbConnection, logger, tokenResolver, config);
 
-		this.addAction('fullReplace', async (
-			models: User,
-			requestBody: any,
-			requestMediaHandler: WritableRepresentation,
-			auth: User) => {
+		// todo: I don't know what the purpose of this endpoint is?
+		/*this.addAction('fullReplace', async (
+			models,
+			requestBody,
+			requestMediaHandler,
+			auth) => {
 
 			if (!requestBody || !requestBody.accessToken) {
 				throw new InvalidRequestError('Credentials must be provided for this user');
@@ -32,7 +36,7 @@ export default class UserResource extends StarterResource {
 			//		some form of authentication on this endpoint
 			// Note: this might be better as a part of the userRepresentation Validation. Maybe a new "validate multi"
 			//		function or something.
-			const cognitoRequest = new Request(true, config.cognitoUrl, config.cognitoPort);
+			const cognitoRequest = new Request(true, config.cognito.url, config.cognito.port);
 			const authResponse = await cognitoRequest.request('GET', '/oauth2/userInfo', undefined, {
 				authorization: `Bearer ${  requestBody.accessToken}`
 			});
@@ -42,8 +46,10 @@ export default class UserResource extends StarterResource {
 				throw new InvalidRequestError('Invalid credentials provided for this user');
 			}
 
-			await requestMediaHandler.applyEdit(requestBody, models, auth);
-			return models.save();
+			if (requestMediaHandler) {
+				await requestMediaHandler.applyEdit(requestBody, models, auth);
+				return models.save();
+			}
 		}, {
 			authSchemes: { [ AUTH_BEARER ]: tokenResolver },
 			requestMediaTypes: { [MEDIA_JSON]: new UserRepresentation('fullReplace') },
@@ -55,13 +61,9 @@ export default class UserResource extends StarterResource {
 			// ideally as an extra step we would require auth on this, and force clients to get a client auth token
 			//		before adding users.
 			authRequired: false
-		});
+		});*/
 
-		this.addAction('partialEdit', (
-			models: User,
-			requestBody: any,
-			requestMediaHandler: WritableRepresentation,
-			auth: User) => {
+		this.addAction('partialEdit', (models, requestBody, requestMediaHandler, auth) => {
 
 			// auth is valid if we get to this point, but I'm checking for auth here to protect against bugs
 			// this would be a good location to check auth roles
@@ -69,8 +71,10 @@ export default class UserResource extends StarterResource {
 				throw new ForbiddenError('You do not have permission to manipulate this resource');
 			}
 
-			requestMediaHandler.applyEdit(requestBody, models, auth);
-			return models.save();
+			if (requestMediaHandler) {
+				requestMediaHandler.applyEdit(requestBody, models, auth);
+				return models.save();
+			}
 		}, {
 			authSchemes: { [AUTH_BEARER]: tokenResolver },
 			responseMediaTypes: { [MEDIA_JSON]: new UserRepresentation('get') },
@@ -80,7 +84,7 @@ export default class UserResource extends StarterResource {
 			authRequired: true
 		});
 
-		this.addAction('get', (models: User, requestBody: any, requestMediaHandler: WritableRepresentation, auth: User) => {
+		this.addAction('get', (models, requestBody, requestMediaHandler, auth) => {
 			// You can only view your own user page
 			if (!auth || auth.id != models.id) {
 				throw new ForbiddenError('You do not have permission to view this resource');
@@ -93,12 +97,7 @@ export default class UserResource extends StarterResource {
 			authRequired: true
 		});
 
-		this.addAction('delete', (
-			models: User,
-			requestBody: any,
-			requestMediaHandler: WritableRepresentation,
-			auth: User) => {
-
+		this.addAction('delete', (models, requestBody, requestMediaHandler, auth) => {
 			// auth is valid if we get to this point, but I'm checking for auth here to protect against bugs
 			// this would be a good dbConnection to check auth roles
 			if (!auth || auth.id != models.id) {
@@ -116,10 +115,14 @@ export default class UserResource extends StarterResource {
 	}
 
 	async modelsResolver(
-		urlParams: ParsedURLParams,
+		urlParams: ParsedURLParams | undefined,
 		searchParams: URLSearchParams | undefined,
 		action: keyof ActionList,
-		pathname: string): User {
+		pathname: string): Promise<User> {
+
+		if (!urlParams?.remote_id) {
+			throw new NotFoundError('User not found');
+		}
 
 		const user = await User.findOne({
 			where: {

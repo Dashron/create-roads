@@ -3,16 +3,31 @@ to: src/api/resources/example/exampleListResource.ts
 ---
 import { Sequelize } from 'sequelize/types';
 
-import { StarterResource, Logger } from 'roads-starter';
-import { APIProjectConfig, TokenResolver } from 'roads-starter/types/api/apiProject';
 import { ParsedURLParams, ActionList } from 'roads-api/types/Resource/resource';
 
 import { Example } from './exampleModel';
 import ExampleRepresentation from './exampleRepresentation';
-import { buildGetListConfig, appendFn, buildAppendConfig } from '../resourceDefaults';
+import { buildGetListConfig, buildAppendConfig } from '@api-core/resourceDefaults';
+import StarterResource, { TokenResolver } from '@api-core/starterResource';
+import { AuthFormat } from '@api-core/tokenResolver';
+import { Logger } from '@root/logger';
+import { APIConfig } from '@root/api/server';
+import CollectionRepresentation from '@api-core/collectionRepresentation';
+import { ForbiddenError } from 'roads-api/types/core/httpErrors';
 
-export default class ExampleListResource extends StarterResource {
-	constructor(dbConnection: Sequelize, logger: Logger, tokenResolver: TokenResolver, config: APIProjectConfig) {
+type ExampleCollection = { examples?: Array<Example> };
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface ExampleCollectionRepresentation extends CollectionRepresentation<
+	ExampleRepresentation,
+	Example,
+	AuthFormat
+> {}
+
+export default class ExampleListResource extends StarterResource<ExampleCollectionRepresentation,
+	Example | ExampleCollection, AuthFormat> {
+
+	constructor(dbConnection: Sequelize, logger: Logger, tokenResolver: TokenResolver<AuthFormat>, config: APIConfig) {
 		super(dbConnection, logger, tokenResolver, config);
 
 		this.addAction('get', () => {
@@ -21,7 +36,24 @@ export default class ExampleListResource extends StarterResource {
 			return models.examples;
 		}));
 
-		this.addAction('append', appendFn, buildAppendConfig(tokenResolver, ExampleRepresentation));
+		this.addAction('append', async (
+			models: Example,
+			requestBody,
+			requestMediaHandler,
+			auth
+		) => {
+
+			if (!auth) {
+				throw new ForbiddenError('You do not have permission to manipulate this resource');
+			}
+
+			if (requestMediaHandler) {
+				await requestMediaHandler.applyEdit(requestBody, models, auth);
+			}
+			models.ownerId = auth.id;
+			models.active = 1;
+			return models.save();
+		}, buildAppendConfig(tokenResolver, ExampleRepresentation));
 
 		this.setSearchSchema({
 			per_page: {
@@ -33,10 +65,13 @@ export default class ExampleListResource extends StarterResource {
 		});
 	}
 
-	async modelsResolver(urlParams: ParsedURLParams | undefined,
+	async modelsResolver(
+		urlParams: ParsedURLParams | undefined,
 		searchParams: URLSearchParams | undefined,
 		action: keyof ActionList,
-		pathname: string, auth: { id: string }): Promise<Example | { examples?: Array<Example> }> {
+		pathname: string,
+		auth: AuthFormat
+	): Promise<Example | { examples?: Array<Example> }> {
 
 		if (action === 'append') {
 			return Example.build();
@@ -59,6 +94,10 @@ export default class ExampleListResource extends StarterResource {
 			if (searchParams.has('page')) {
 				models.page = Number(searchParams.get('page'));
 			}
+		}
+
+		if (!auth) {
+			return {};
 		}
 
 		models.examples = await Example.findAll({

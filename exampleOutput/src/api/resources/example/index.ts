@@ -1,24 +1,35 @@
-import exampleResource from './exampleResource';
-import exampleListResource from './exampleListResource';
-import APIProject from '../../core/apiProject';
+import ExampleResource from './exampleResource';
+import ExampleListResource from './exampleListResource';
 import * as path from 'path';
 
-export function registerAPI (apiProject: APIProject): void {
-	apiProject.addModel(path.join(__dirname  , '/exampleModel'));
+import { Router } from 'roads-api';
+import { Sequelize } from 'sequelize/types';
+import { Logger } from '../../../logger';
+import { TokenResolver } from '@root/api/core/starterResource';
+import { AuthFormat } from '@root/api/core/tokenResolver';
 
-	apiProject.addResource('/examples', exampleListResource);
-	apiProject.addResource('/examples/{example_id}', exampleResource, {
-		urlParams: {
-			schema: {
-				example_id: {
-					type: 'number'
-				}
-			},
-			required: ['example_id']
-		}
-	});
+export function registerAPI (
+	router: Router,
+	connection: Sequelize,
+	logger: Logger,
+	tokenResolver: TokenResolver<AuthFormat>,
+	config): void {
+
+	connection.import(path.join(__dirname, './exampleModel.js'));
+	router.addResource('/examples', new ExampleListResource(connection, logger, tokenResolver, config));
+	router.addResource('/examples/{example_id}',
+		new ExampleResource(connection, logger, tokenResolver, config), {
+			urlParams: {
+				schema: {
+					example_id: {
+						type: 'number'
+					}
+				},
+				required: ['example_id']
+			}
+		});
 }
 
-export function registerInit (apiProject: APIProject): void {
-	apiProject.addModel(path.join(__dirname  , '/exampleModel'));
+export function registerInit (connection: Sequelize): void {
+	connection.import(path.join(__dirname, './exampleModel.js'));
 }

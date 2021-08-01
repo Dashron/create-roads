@@ -1,11 +1,13 @@
 ---
 to: src/api/core/resourceDefaults.ts
 ---
+// TODO: Merge this with starter resource?
 import { ActionConfig, AuthScheme } from 'roads-api/types/Resource/resource';
 import { JSONRepresentation } from 'roads-api';
 import { HTTPErrors, CONSTANTS } from 'roads-api';
 import CollectionRepresentation from './collectionRepresentation';
 import { ResolveArrayItems } from 'roads-api/types/Representation/jsonRepresentation';
+import { TokenResolver } from './starterResource';
 const { NotFoundError } = HTTPErrors;
 const { MEDIA_JSON, MEDIA_JSON_MERGE, AUTH_BEARER } = CONSTANTS;
 
@@ -19,7 +21,7 @@ interface JSONRepresentationConstructor<RepresentationFormat, Models, Auth> {
 export function getFn<RepresentationFormat, Models, Auth> (models: {
 	ownerId: number
 }, requestBody: unknown,
-requestMediaHandler: JSONRepresentation<RepresentationFormat, Models, Auth>, auth: { id: number }): void  {
+requestMediaHandler: JSONRepresentation<RepresentationFormat, Models, Auth>, auth: Auth & { id: number }): void  {
 	if (!auth || (models.ownerId != auth.id)) {
 		// TODO: this resource name should be configurable
 		throw new NotFoundError('Resource Not Found: Auth required');
@@ -30,15 +32,17 @@ export function getWithoutSoftFn<RepresentationFormat, Models, Auth> (models: {
 	ownerId: number,
 	active: number
 }, requestBody: unknown,
-requestMediaHandler: JSONRepresentation<RepresentationFormat, Models, Auth>, auth: { id: number}): void {
+requestMediaHandler: JSONRepresentation<RepresentationFormat, Models, Auth>, auth: Auth & { id: number }): void {
 	if (!auth || (models.ownerId != auth.id) || models.active !== 1) {
 		// TODO: this resource name should be configurable
 		throw new NotFoundError('Resource Not Found: Auth required');
 	}
 }
 
-export function buildGetConfig<RepresentationFormat, Models, Auth> (tokenResolver: AuthScheme<Auth>,
-	representationConstructor: JSONRepresentationConstructor<RepresentationFormat, Models, Auth>): ActionConfig {
+export function buildGetConfig<RepresentationFormat, Models, Auth> (
+	tokenResolver: AuthScheme<Auth>,
+	representationConstructor: JSONRepresentationConstructor<RepresentationFormat, Models, Auth>
+): ActionConfig<Auth> {
 
 	return {
 		authSchemes: { [AUTH_BEARER]: tokenResolver },
@@ -49,9 +53,11 @@ export function buildGetConfig<RepresentationFormat, Models, Auth> (tokenResolve
 	};
 }
 
-export function buildGetListConfig<RepresentationFormat, Models, Auth> (tokenResolver: AuthScheme<Auth>,
+export function buildGetListConfig<RepresentationFormat, Models, Auth> (
+	tokenResolver: AuthScheme<Auth>,
 	representationConstructor: JSONRepresentationConstructor<RepresentationFormat, Models, Auth>,
-	collectionItemsResolver: ResolveArrayItems): ActionConfig {
+	collectionItemsResolver: ResolveArrayItems
+): ActionConfig<Auth> {
 
 	return {
 		authSchemes: { [AUTH_BEARER]: tokenResolver },
@@ -72,15 +78,19 @@ export async function partialEditFn<RepresentationFormat, Models, Auth> (
 	// I don't think this is the right way to define this. TODO
 	models: Models & { save: () => any },
 	requestBody: RepresentationFormat,
-	requestMediaHandler: JSONRepresentation<RepresentationFormat, Models, Auth>, auth: Auth): Promise<unknown> {
+	requestMediaHandler: JSONRepresentation<RepresentationFormat, Models, Auth>, auth: Auth
+): Promise<unknown> {
 	if (auth) {
 		requestMediaHandler.applyEdit(requestBody, models, auth);
 		return models.save();
 	}
 }
 
-export function buildPartialEditConfig<RepresentationFormat, Models, Auth> (tokenResolver: AuthScheme<Auth>,
-	representationConstructor: JSONRepresentationConstructor<RepresentationFormat, Models, Auth>): ActionConfig {
+export function buildPartialEditConfig<RepresentationFormat, Models, Auth> (
+	tokenResolver: AuthScheme<Auth>,
+	representationConstructor: JSONRepresentationConstructor<RepresentationFormat, Models, Auth>
+): ActionConfig<Auth> {
+
 	return {
 		authSchemes: { [AUTH_BEARER]: tokenResolver },
 		requestMediaTypes: { [MEDIA_JSON_MERGE]: new representationConstructor('partialEdit') },
@@ -115,6 +125,8 @@ export function buildFullReplaceConfig(tokenResolver: TokenResolver,
 
 /*
  * APPEND
+ *
+ * TODO: How do we get this working with the list resource
  */
 export async function appendFn<RepresentationFormat, Models, Auth> (
 	models: Models & {
@@ -123,7 +135,8 @@ export async function appendFn<RepresentationFormat, Models, Auth> (
 		save: () => Promise<unknown>
 	}, requestBody: RepresentationFormat,
 	requestMediaHandler: JSONRepresentation<RepresentationFormat, Models, Auth>,
-	auth: Auth & { id: number }): Promise<unknown> {
+	auth: Auth & { id: number }
+): Promise<unknown> {
 
 	await requestMediaHandler.applyEdit(requestBody, models, auth);
 	models.ownerId = auth.id;
@@ -138,15 +151,18 @@ export async function appendFnNoActivation<RepresentationFormat, Models, Auth> (
 	},
 	requestBody: RepresentationFormat,
 	requestMediaHandler: JSONRepresentation<RepresentationFormat, Models, Auth>,
-	auth: Auth & { id : number }): Promise<unknown> {
+	auth: Auth & { id : number }
+): Promise<unknown> {
 
 	await requestMediaHandler.applyEdit(requestBody, models, auth);
 	models.ownerId = auth.id;
 	return models.save();
 }
 
-export function buildAppendConfig<RepresentationFormat, Models, Auth> (tokenResolver: AuthScheme<Auth>,
-	representationConstructor: JSONRepresentationConstructor<RepresentationFormat, Models, Auth>): ActionConfig {
+export function buildAppendConfig<RepresentationFormat, Models, Auth> (
+	tokenResolver: TokenResolver<Auth>,
+	representationConstructor: JSONRepresentationConstructor<RepresentationFormat, Models, Auth>
+): ActionConfig<Auth> {
 
 	return {
 		authSchemes: { [AUTH_BEARER]: tokenResolver },
@@ -170,7 +186,7 @@ export async function softDeleteFn<RepresentationFormat, Models, Auth> (
 	},
 	requestBody: unknown,
 	requestMediaHandler: JSONRepresentation<RepresentationFormat, Models, Auth>,
-	auth: { id: number } ): Promise<unknown> {
+	auth: Auth & { id: number } ): Promise<unknown> {
 
 	if (models.ownerId == auth.id) {
 		models.active = 0;
@@ -185,7 +201,8 @@ export async function hardDeleteFn<RepresentationFormat, Models, Auth> (
 	},
 	requestBody: unknown,
 	requestMediaHandler: JSONRepresentation<RepresentationFormat, Models, Auth>,
-	auth: { id: number }): Promise<unknown> {
+	auth: { id: number }
+): Promise<unknown> {
 
 	if (models.ownerId == auth.id) {
 		return models.destroy({force: true});
@@ -194,7 +211,8 @@ export async function hardDeleteFn<RepresentationFormat, Models, Auth> (
 
 export function buildDeleteConfig<RepresentationFormat, Models, Auth>(
 	tokenResolver: AuthScheme<Auth>,
-	representationConstructor: JSONRepresentationConstructor<RepresentationFormat, Models, Auth>): ActionConfig {
+	representationConstructor: JSONRepresentationConstructor<RepresentationFormat, Models, Auth>
+): ActionConfig<Auth> {
 
 	return {
 		authSchemes: { [AUTH_BEARER]: tokenResolver },

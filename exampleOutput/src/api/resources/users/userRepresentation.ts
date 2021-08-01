@@ -1,7 +1,7 @@
 import { JSONRepresentation } from 'roads-api';
 import moment from 'moment';
 import { User } from './userModel';
-import { AuthFormat } from '../../core/tokenResolver';
+import { AuthFormat } from '@api-core/tokenResolver';
 
 export interface UserFormat {
 	id: number;
