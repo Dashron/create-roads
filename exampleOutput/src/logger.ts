@@ -1,3 +1,5 @@
+import { Context, Middleware } from 'roads/types/core/road';
+
 export interface Logger {
     log: (data: any) => any;
     warn: (warning: any) => any;
@@ -9,12 +11,23 @@ const logs: {
     [key: string]: Logger
 } = {};
 
+
+export function buildLoggerMiddleware (logger: Logger): Middleware<Context> {
+	return function middleware (method, url, body, headers, next) {
+		logger.info({
+			method: method,
+			url: url
+		});
+
+		return next();
+	};
+}
+
 /**
  * This is a super simple logger for the purposes of this example. Every function used in this example
  * 		is used by roads, and expected to exist in the logging
  * object that you provide to the projects
  */
-
 export function createLogger(logName: string): Logger {
 	if (logs[logName]) {
 		return logs[logName];

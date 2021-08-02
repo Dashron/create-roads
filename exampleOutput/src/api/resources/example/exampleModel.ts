@@ -1,6 +1,17 @@
-import { Sequelize, Model, DataTypes as DataTypesModule } from 'sequelize';
+import { Sequelize, Model, DataTypes, Optional } from 'sequelize';
 
-export class Example extends Model {
+interface ExampleAttributes {
+	id: number;
+	name: string;
+	ownerId: number;
+	active: number;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface ExampleCreationAttributes extends Optional<ExampleAttributes, 'id'> {}
+
+
+export class Example extends Model<ExampleAttributes, ExampleCreationAttributes> implements ExampleAttributes {
 	public id!: number;
 	public name!: string;
 	public ownerId!: number;
@@ -11,7 +22,7 @@ export class Example extends Model {
 	public readonly updatedAt!: Date;
 }
 
-export default (sequelize: Sequelize, DataTypes: typeof DataTypesModule): void => {
+export default (sequelize: Sequelize): void => {
 	Example.init({
 		id: {
 			type:  DataTypes.INTEGER,

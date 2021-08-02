@@ -8,12 +8,15 @@
         "strictNullChecks": true,
         "noImplicitThis": true,
         "alwaysStrict": true,
-        "baseUrl": ".",
+        "baseUrl": "src",
         "paths": {
+			"@root/*": ["./*"],
+			"@api-core/*": ["api/core/*"],
+			"@web-core/*": ["web/core/*"],
             "*": [
                 "node_modules/*",
                 "src/types/*"
-            ]
+            ],
         },
         "allowSyntheticDefaultImports": true,
         "declaration": true,

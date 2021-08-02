@@ -5,12 +5,14 @@ import * as jwt from 'jsonwebtoken';
 import { Sequelize } from 'sequelize/types';
 import { Logger } from '../../logger';
 import { User } from '../resources/users/userModel';
-import { APIProjectConfig } from './apiProject';
+import { APIConfig } from '../server';
 import { TokenResolver } from './starterResource';
 
 export type AuthFormat = User | false;
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface JWTTokenResolver extends TokenResolver<AuthFormat> {}
 
-export default (sequelize: Sequelize, logger: Logger, config: APIProjectConfig ): TokenResolver<AuthFormat> => {
+export default (sequelize: Sequelize, logger: Logger, config: APIConfig ): TokenResolver<AuthFormat> => {
 	return async function (token: string): Promise<AuthFormat> {
 		try {
 			const decoded = jwt.verify(token, config.secret, {

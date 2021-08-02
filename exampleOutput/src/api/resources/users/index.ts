@@ -1,18 +1,19 @@
 import UserResource from './userResource';
-import * as path from 'path';
 import { Router } from 'roads-api';
 import { Sequelize } from 'sequelize/types';
 import { Logger } from '../../../logger';
-import { TokenResolver } from 'src/api/core/starterResource';
+import registerUserModel from './userModel';
+import { APIConfig } from '@root/api/server';
+import { JWTTokenResolver } from '@root/api/core/tokenResolver';
 
 export function registerAPI (
 	router: Router,
 	connection: Sequelize,
 	logger: Logger,
-	tokenResolver: TokenResolver,
-	config): void {
+	tokenResolver: JWTTokenResolver,
+	config: APIConfig): void {
 
-	connection.import(path.join(__dirname, './users/userModel.js'));
+	registerUserModel(connection);
 
 	router.addResource('/users/{remote_id}',
 		new UserResource(connection, logger, tokenResolver, config), {
@@ -28,7 +29,7 @@ export function registerAPI (
 }
 
 export function registerInit (connection: Sequelize): void {
-	connection.import(path.join(__dirname, './users/userModel.js'));
+	registerUserModel(connection);
 }
 
 

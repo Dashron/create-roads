@@ -2,27 +2,37 @@
 to: src/api/resources/users/index.ts
 ---
 import UserResource from './userResource';
+import { Router } from 'roads-api';
+import { Sequelize } from 'sequelize/types';
+import { Logger } from '../../../logger';
+import registerUserModel from './userModel';
+import { APIConfig } from '@root/api/server';
+import { JWTTokenResolver } from '@root/api/core/tokenResolver';
 
-import APIProject from '../../core/apiProject';
-import * as path from 'path';
+export function registerAPI (
+	router: Router,
+	connection: Sequelize,
+	logger: Logger,
+	tokenResolver: JWTTokenResolver,
+	config: APIConfig): void {
 
-export function registerAPI (apiProject: APIProject): void {
-	apiProject.addModel(path.join(__dirname, './users/userModel.js'));
+	registerUserModel(connection);
 
-	apiProject.addResource('/users/{remote_id}', UserResource, {
-		urlParams: {
-			schema: {
-				remote_id: {
-					type: 'string'
-				}
-			},
-			required: ['remote_id']
-		}
-	});
+	router.addResource('/users/{remote_id}',
+		new UserResource(connection, logger, tokenResolver, config), {
+			urlParams: {
+				schema: {
+					remote_id: {
+						type: 'string'
+					}
+				},
+				required: ['remote_id']
+			}
+		});
 }
 
-export function registerInit (apiProject: APIProject): void {
-	apiProject.addModel(path.join(__dirname, './users/userModel.js'));
+export function registerInit (connection: Sequelize): void {
+	registerUserModel(connection);
 }
 
 

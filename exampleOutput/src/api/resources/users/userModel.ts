@@ -1,5 +1,19 @@
-import { Sequelize, Model, DataTypes as DataTypesModule } from 'sequelize';
-export class User extends Model {
+import { Sequelize, Model, DataTypes, Optional } from 'sequelize';
+
+interface UserAttributes {
+    id: number;
+    accessToken: string;
+    remoteId: string;
+    refreshToken: string;
+    expiresIn: number;
+    active: number;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface UserCreationAttributes extends Optional<UserAttributes, 'id'> {}
+
+
+export class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes  {
     public id!: number; // Note that the `null assertion` `!` is required in strict mode.
     public accessToken!: string;
     public remoteId!: string;
@@ -12,7 +26,7 @@ export class User extends Model {
     public readonly updatedAt!: Date;
 }
 
-export default (sequelize: Sequelize, DataTypes: typeof DataTypesModule): void => {
+export default (sequelize: Sequelize): void => {
 	// Example TS models: https://sequelize.org/master/manual/typescript.html
 	User.init({
 		id: {

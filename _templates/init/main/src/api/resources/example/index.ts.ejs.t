@@ -3,22 +3,21 @@ to: src/api/resources/example/index.ts
 ---
 import ExampleResource from './exampleResource';
 import ExampleListResource from './exampleListResource';
-import * as path from 'path';
-
 import { Router } from 'roads-api';
 import { Sequelize } from 'sequelize/types';
 import { Logger } from '../../../logger';
-import { TokenResolver } from '@root/api/core/starterResource';
-import { AuthFormat } from '@root/api/core/tokenResolver';
+import { JWTTokenResolver } from '@root/api/core/tokenResolver';
+import { APIConfig } from '@root/api/server';
+import registerExampleModel from './exampleModel';
 
 export function registerAPI (
 	router: Router,
 	connection: Sequelize,
 	logger: Logger,
-	tokenResolver: TokenResolver<AuthFormat>,
-	config): void {
+	tokenResolver: JWTTokenResolver,
+	config: APIConfig): void {
 
-	connection.import(path.join(__dirname, './exampleModel.js'));
+	registerExampleModel(connection);
 	router.addResource('/examples', new ExampleListResource(connection, logger, tokenResolver, config));
 	router.addResource('/examples/{example_id}',
 		new ExampleResource(connection, logger, tokenResolver, config), {
@@ -34,5 +33,5 @@ export function registerAPI (
 }
 
 export function registerInit (connection: Sequelize): void {
-	connection.import(path.join(__dirname, './exampleModel.js'));
+	registerExampleModel(connection);
 }
