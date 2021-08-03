@@ -21,7 +21,7 @@
     "jsonwebtoken": "^8.5.1",
     "roads": "7.0.0",
     "roads-api": "2.0.1",
-    "roads-server": "1.0.3",
+    "roads-server": "1.0.4",
     "sequelize": "^6.6.5",
     "watchify": "^4.0.0"
   },
