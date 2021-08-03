@@ -2,7 +2,7 @@ import * as jwt from 'jsonwebtoken';
 import { Sequelize } from 'sequelize/types';
 import { Logger } from '../../logger';
 import { User } from '../resources/users/userModel';
-import { APIConfig } from '../server';
+import { APIConfig } from '../api';
 import { TokenResolver } from './starterResource';
 
 export type AuthFormat = User | false;

@@ -8,7 +8,7 @@ import { buildGetListConfig, buildAppendConfig } from '@api-core/resourceDefault
 import StarterResource, { TokenResolver } from '@api-core/starterResource';
 import { AuthFormat } from '@api-core/tokenResolver';
 import { Logger } from '@root/logger';
-import { APIConfig } from '@root/api/server';
+import { APIConfig } from '@root/api/api';
 import CollectionRepresentation from '@api-core/collectionRepresentation';
 import { ForbiddenError } from 'roads-api/types/core/httpErrors';
 

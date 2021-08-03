@@ -3,8 +3,11 @@ import { CorsMiddleware, Response, Road } from 'roads';
 import { buildLoggerMiddleware, createLogger, Logger } from '../logger';
 import { Router } from 'roads-api';
 import { Server } from 'roads-server';
-import activeRoutes from './activeRoutes';
 import { StarterResourceConfig } from './core/starterResource';
+import * as exampleAPI from '@root/api/resources/example/index';
+import * as usersAPI from '@root/api/resources/users/index';
+import { Sequelize } from 'sequelize/types';
+import { JWTTokenResolver } from './core/tokenResolver';
 
 export interface APIConfig extends StarterResourceConfig {
 	cors: {
@@ -35,11 +38,23 @@ export interface APIConfig extends StarterResourceConfig {
 	secret: string
 }
 
+export interface RegisterFn {
+	(
+		router: Router,
+		connection: Sequelize,
+		logger: Logger,
+		tokenResolver: JWTTokenResolver,
+		config: APIConfig
+	): void
+}
+
 export class API {
 	private config: APIConfig;
 	private road: Road;
 	private router: Router;
 	private logger: Logger;
+	private connection: Sequelize;
+	private tokenResolver: JWTTokenResolver;
 
 	constructor (config: APIConfig) {
 		this.config = config;
@@ -48,6 +63,8 @@ export class API {
 
 		// Assign logging middleware
 		this.logger = createLogger('api-server');
+		this.connection = this.buildConnection();
+
 		this.road.use(buildLoggerMiddleware(this.logger));
 
 		this.road.use(CorsMiddleware.build({
@@ -57,7 +74,10 @@ export class API {
 			supportsCredentials: true
 		}));
 
-		activeRoutes(this.router);
+		this.registerProjects([
+			exampleAPI,
+			usersAPI
+		]);
 
 		// Assign initial middleware here
 	}
@@ -87,20 +107,32 @@ export class API {
 	}
 
 	createDbTables () {
-		this.connection().sync();
+		this.connection.sync();
 	}
 
-
-	/*addModel(path: string) {
-		this.connection.import(path);
+	buildConnection() {
+		return new Sequelize(this.config.db.PGDATABASE, this.config.db.PGUSER, this.config.db.PGPASSWORD, {
+			host: this.config.db.PGHOST,
+			dialect: 'postgres',
+			port: this.config.db.PGPORT,
+			pool: {
+				max: 5,
+				min: 0,
+				acquire: 30000,
+				idle: 10000
+			},
+			dialectOptions: {
+				ssl: {
+					rejectUnauthorized: true,
+					ca: fs.readFileSync(this.config.db.PGSSL).toString()
+				},
+			}
+		});
 	}
 
-	addResource(path: string, resource: StarterResourceConstructor, templateSchema?: any) {
-		this.router.addResource(path,
-			new resource(this.connection, this.logger, this.tokenResolver, this.config), templateSchema);
+	registerProjects (projects: Array<{ register: RegisterFn }>): void {
+		projects.forEach(project => {
+			project.register(this.router, this.connection, this.logger, this.tokenResolver, this.config);
+		});
 	}
-
-	addTokenResolver(resolverBuilder: (connection: Sequelize, logger: Logger, config: APIProjectConfig) => TokenResolver) {
-		this.tokenResolver = resolverBuilder(this.connection, this.logger, this.config);
-	}*/
 }

@@ -6,7 +6,7 @@ import UserRepresentation from './userRepresentation';
 import { Logger } from '../../../logger';
 import StarterResource, { TokenResolver } from '../../core/starterResource';
 import { AuthFormat } from '../../core/tokenResolver';
-import { APIConfig } from '../../server';
+import { APIConfig } from '../../api';
 
 const { NotFoundError, ForbiddenError } = HTTPErrors;
 const { MEDIA_JSON, MEDIA_JSON_MERGE, AUTH_BEARER } = CONSTANTS;

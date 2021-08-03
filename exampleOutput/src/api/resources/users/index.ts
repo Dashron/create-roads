@@ -1,17 +1,8 @@
 import UserResource from './userResource';
-import { Router } from 'roads-api';
-import { Sequelize } from 'sequelize/types';
-import { Logger } from '../../../logger';
 import registerUserModel from './userModel';
-import { APIConfig } from '@root/api/server';
-import { JWTTokenResolver } from '@root/api/core/tokenResolver';
+import { RegisterFn } from '@root/api/api';
 
-export function registerAPI (
-	router: Router,
-	connection: Sequelize,
-	logger: Logger,
-	tokenResolver: JWTTokenResolver,
-	config: APIConfig): void {
+export const register: RegisterFn = (router, connection, logger, tokenResolver, config) => {
 
 	registerUserModel(connection);
 
@@ -26,10 +17,4 @@ export function registerAPI (
 				required: ['remote_id']
 			}
 		});
-}
-
-export function registerInit (connection: Sequelize): void {
-	registerUserModel(connection);
-}
-
-
+};

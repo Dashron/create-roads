@@ -1,19 +1,9 @@
 import ExampleResource from './exampleResource';
 import ExampleListResource from './exampleListResource';
-import { Router } from 'roads-api';
-import { Sequelize } from 'sequelize/types';
-import { Logger } from '../../../logger';
-import { JWTTokenResolver } from '@root/api/core/tokenResolver';
-import { APIConfig } from '@root/api/server';
+import { RegisterFn } from '@root/api/api';
 import registerExampleModel from './exampleModel';
 
-export function registerAPI (
-	router: Router,
-	connection: Sequelize,
-	logger: Logger,
-	tokenResolver: JWTTokenResolver,
-	config: APIConfig): void {
-
+export const register: RegisterFn = (router, connection, logger, tokenResolver, config) => {
 	registerExampleModel(connection);
 	router.addResource('/examples', new ExampleListResource(connection, logger, tokenResolver, config));
 	router.addResource('/examples/{example_id}',
@@ -27,8 +17,4 @@ export function registerAPI (
 				required: ['example_id']
 			}
 		});
-}
-
-export function registerInit (connection: Sequelize): void {
-	registerExampleModel(connection);
-}
+};

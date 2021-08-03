@@ -13,7 +13,7 @@ import {
 import StarterResource, { TokenResolver } from '@api-core/starterResource';
 import { AuthFormat } from '@api-core/tokenResolver';
 import { Logger } from '@root/logger';
-import { APIConfig } from '@root/api/server';
+import { APIConfig } from '@root/api/api';
 
 const { NotFoundError } = HTTPErrors;
 
