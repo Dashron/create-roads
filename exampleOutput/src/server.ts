@@ -5,7 +5,7 @@
  *
  * This file starts up the HTTP roads server
  */
-
+/*
 import { Road, Response, RemoveTrailingSlashMiddleware, CookieMiddleware,
 	StoreValsMiddleware, ParseBodyMiddleware, BasicRouterMiddleware } from 'roads';
 
@@ -43,3 +43,4 @@ const server = new Server(road as any, function (err: Error) {
 server.listen(8081, 'localhost', function () {
 	console.log('server has started');
 });
+*/

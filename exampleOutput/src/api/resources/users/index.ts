@@ -1,6 +1,6 @@
 import UserResource from './userResource';
 import registerUserModel from './userModel';
-import { RegisterFn } from '@root/api/api';
+import { RegisterFn } from '@src/api/api';
 
 export const register: RegisterFn = (router, connection, logger, tokenResolver, config) => {
 

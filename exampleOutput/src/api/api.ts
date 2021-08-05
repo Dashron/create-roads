@@ -4,8 +4,8 @@ import { buildLoggerMiddleware, createLogger, Logger } from '../logger';
 import { Router } from 'roads-api';
 import { Server } from 'roads-server';
 import { StarterResourceConfig } from './core/starterResource';
-import * as exampleAPI from '@root/api/resources/example/index';
-import * as usersAPI from '@root/api/resources/users/index';
+import * as exampleAPI from '@src/api/resources/example/index';
+import * as usersAPI from '@src/api/resources/users/index';
 import { Sequelize } from 'sequelize/types';
 import { JWTTokenResolver } from './core/tokenResolver';
 
@@ -106,11 +106,11 @@ export class API {
 		server.listen(this.config.port, this.config.host);
 	}
 
-	createDbTables () {
+	protected createDbTables () {
 		this.connection.sync();
 	}
 
-	buildConnection() {
+	protected buildConnection() {
 		return new Sequelize(this.config.db.PGDATABASE, this.config.db.PGUSER, this.config.db.PGPASSWORD, {
 			host: this.config.db.PGHOST,
 			dialect: 'postgres',
@@ -130,7 +130,7 @@ export class API {
 		});
 	}
 
-	registerProjects (projects: Array<{ register: RegisterFn }>): void {
+	protected registerProjects (projects: Array<{ register: RegisterFn }>): void {
 		projects.forEach(project => {
 			project.register(this.router, this.connection, this.logger, this.tokenResolver, this.config);
 		});

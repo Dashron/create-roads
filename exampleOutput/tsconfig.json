@@ -8,11 +8,11 @@
         "strictNullChecks": true,
         "noImplicitThis": true,
         "alwaysStrict": true,
-        "baseUrl": "src",
+        "baseUrl": ".",
         "paths": {
-			"@root/*": ["./*"],
-			"@api-core/*": ["api/core/*"],
-			"@web-core/*": ["web/core/*"],
+			"@src/*": ["./src/*"],
+			"@api-core/*": ["./src/api/core/*"],
+			"@web-core/*": ["./src/web/core/*"],
             "*": [
                 "node_modules/*",
                 "src/types/*"
@@ -24,6 +24,7 @@
     },
     "exclude": [
         "./types",
+		"./src/web"
     ],
     "include": [
         "./src/**/*.ts"

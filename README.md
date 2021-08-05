@@ -4,7 +4,7 @@ An initalizer package for a roads project (replaces roads starter)
 
 
 # TODO
-1. Get roads-api example running
+1. Get roads-api example running (setup config, run, debug)
 2. Clean up the api example. wtf is with all the generics all over the place, the code is awful looking. can we define generics in one place? can we use factories to mask the amount of consistent initial parameters we're using?
 3. Get web example running (vitejs.dev? matuzo.at/blog/html-boilerplate?)
 4. Hook together api and web examples

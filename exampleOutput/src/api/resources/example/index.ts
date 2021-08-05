@@ -1,6 +1,6 @@
 import ExampleResource from './exampleResource';
 import ExampleListResource from './exampleListResource';
-import { RegisterFn } from '@root/api/api';
+import { RegisterFn } from '@src/api/api';
 import registerExampleModel from './exampleModel';
 
 export const register: RegisterFn = (router, connection, logger, tokenResolver, config) => {

@@ -1,22 +1,21 @@
 import { Sequelize } from 'sequelize/types';
 
-import { ParsedURLParams, ActionList } from 'roads-api/types/Resource/resource';
-
 import { Example } from './exampleModel';
-import ExampleRepresentation from './exampleRepresentation';
-import { buildGetListConfig, buildAppendConfig } from '@api-core/resourceDefaults';
-import StarterResource, { TokenResolver } from '@api-core/starterResource';
-import { AuthFormat } from '@api-core/tokenResolver';
-import { Logger } from '@root/logger';
-import { APIConfig } from '@root/api/api';
+import ExampleRepresentation, { ExampleFormat } from './exampleRepresentation';
+import StarterResource from '@api-core/starterResource';
+import { AuthFormat, JWTTokenResolver } from '@api-core/tokenResolver';
+import { Logger } from '@src/logger';
+import { APIConfig } from '@src/api/api';
 import CollectionRepresentation from '@api-core/collectionRepresentation';
 import { ForbiddenError } from 'roads-api/types/core/httpErrors';
+import { AUTH_BEARER, MEDIA_JSON } from 'roads-api/types/core/constants';
+import { ActionList, ParsedURLParams } from 'roads-api/types/Resource/resource';
 
 type ExampleCollection = { examples?: Array<Example> };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface ExampleCollectionRepresentation extends CollectionRepresentation<
-	ExampleRepresentation,
+	ExampleFormat,
 	Example,
 	AuthFormat
 > {}
@@ -24,14 +23,21 @@ interface ExampleCollectionRepresentation extends CollectionRepresentation<
 export default class ExampleListResource extends StarterResource<ExampleCollectionRepresentation,
 	Example | ExampleCollection, AuthFormat> {
 
-	constructor(dbConnection: Sequelize, logger: Logger, tokenResolver: TokenResolver<AuthFormat>, config: APIConfig) {
+	constructor(dbConnection: Sequelize, logger: Logger, tokenResolver: JWTTokenResolver, config: APIConfig) {
 		super(dbConnection, logger, tokenResolver, config);
 
 		this.addAction('get', () => {
 			return;
-		}, buildGetListConfig(tokenResolver, ExampleRepresentation, (models: {examples: Array<Example>}) => {
-			return models.examples;
-		}));
+		}, {
+			authSchemes: { [AUTH_BEARER]: tokenResolver },
+			responseMediaTypes: {
+				[MEDIA_JSON]: new CollectionRepresentation('get',
+					new ExampleRepresentation('get'), ( models: {examples: Array<Example>} ) => {
+						return models.examples;
+					}
+				)
+			}
+		});
 
 		this.addAction('append', async (
 			models: Example,
@@ -50,7 +56,14 @@ export default class ExampleListResource extends StarterResource<ExampleCollecti
 			models.ownerId = auth.id;
 			models.active = 1;
 			return models.save();
-		}, buildAppendConfig(tokenResolver, ExampleRepresentation));
+		}, {
+			authSchemes: { [AUTH_BEARER]: tokenResolver },
+			requestMediaTypes: { [MEDIA_JSON]: new ExampleRepresentation('append') },
+			responseMediaTypes: { [MEDIA_JSON]: new ExampleRepresentation('append') },
+			defaultRequestMediaType: MEDIA_JSON,
+			defaultResponseMediaType: MEDIA_JSON,
+			authRequired: true
+		});
 
 		this.setSearchSchema({
 			per_page: {

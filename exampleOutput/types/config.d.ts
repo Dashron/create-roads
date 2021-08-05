@@ -1,1 +1,1 @@
-export default function (folderPath: string, environment: string): any;
+export default function (folderPath: string, prefix?: string, environment?: string): {};

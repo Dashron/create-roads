@@ -39,7 +39,7 @@ requestMediaHandler: JSONRepresentation<RepresentationFormat, Models, Auth>, aut
 export function buildGetConfig<RepresentationFormat, Models, Auth> (
 	tokenResolver: AuthScheme<Auth>,
 	representationConstructor: JSONRepresentationConstructor<RepresentationFormat, Models, Auth>
-): ActionConfig<Auth> {
+): ActionConfig {
 
 	return {
 		authSchemes: { [AUTH_BEARER]: tokenResolver },
@@ -54,7 +54,7 @@ export function buildGetListConfig<RepresentationFormat, Models, Auth> (
 	tokenResolver: AuthScheme<Auth>,
 	representationConstructor: JSONRepresentationConstructor<RepresentationFormat, Models, Auth>,
 	collectionItemsResolver: ResolveArrayItems
-): ActionConfig<Auth> {
+): ActionConfig {
 
 	return {
 		authSchemes: { [AUTH_BEARER]: tokenResolver },
@@ -86,7 +86,7 @@ export async function partialEditFn<RepresentationFormat, Models, Auth> (
 export function buildPartialEditConfig<RepresentationFormat, Models, Auth> (
 	tokenResolver: AuthScheme<Auth>,
 	representationConstructor: JSONRepresentationConstructor<RepresentationFormat, Models, Auth>
-): ActionConfig<Auth> {
+): ActionConfig {
 
 	return {
 		authSchemes: { [AUTH_BEARER]: tokenResolver },
@@ -159,7 +159,7 @@ export async function appendFnNoActivation<RepresentationFormat, Models, Auth> (
 export function buildAppendConfig<RepresentationFormat, Models, Auth> (
 	tokenResolver: TokenResolver<Auth>,
 	representationConstructor: JSONRepresentationConstructor<RepresentationFormat, Models, Auth>
-): ActionConfig<Auth> {
+): ActionConfig {
 
 	return {
 		authSchemes: { [AUTH_BEARER]: tokenResolver },
@@ -209,7 +209,7 @@ export async function hardDeleteFn<RepresentationFormat, Models, Auth> (
 export function buildDeleteConfig<RepresentationFormat, Models, Auth>(
 	tokenResolver: AuthScheme<Auth>,
 	representationConstructor: JSONRepresentationConstructor<RepresentationFormat, Models, Auth>
-): ActionConfig<Auth> {
+): ActionConfig {
 
 	return {
 		authSchemes: { [AUTH_BEARER]: tokenResolver },

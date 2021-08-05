@@ -32,11 +32,7 @@
     "enquirer": "^2.3.6",
     "execa": "^5.0.0",
     "hygen": "^6.0.4",
-    "jsonwebtoken": "^8.5.1",
-    "roads": "7.0.0",
-    "roads-api": "2.0.1",
-    "roads-server": "^1.0.3",
-    "sequelize": "^6.6.5"
+
   },
   "bin": {
     "create-roads": "dist/init.js"
@@ -44,6 +40,6 @@
   "files": [
     "dist",
     "types",
-	"_templates"
+    "_templates"
   ]
 }

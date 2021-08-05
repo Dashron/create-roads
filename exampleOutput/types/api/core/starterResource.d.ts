@@ -1,6 +1,6 @@
 import { Resource } from 'roads-api';
 import { Sequelize } from 'sequelize/types';
-import { Logger } from '@root/logger';
+import { Logger } from '@src/logger';
 export declare type TokenResolver<AuthType> = (token: string) => Promise<AuthType>;
 export declare type StarterResourceConfig = {
     [key: string]: unknown;

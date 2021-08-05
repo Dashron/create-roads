@@ -1,3 +1,2 @@
-import APIProject from '../../core/apiProject';
-export declare function registerAPI(apiProject: APIProject): void;
-export declare function registerInit(apiProject: APIProject): void;
+import { RegisterFn } from '@src/api/api';
+export declare const register: RegisterFn;

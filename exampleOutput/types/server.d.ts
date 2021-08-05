@@ -5,4 +5,3 @@
  *
  * This file starts up the HTTP roads server
  */
-export {};

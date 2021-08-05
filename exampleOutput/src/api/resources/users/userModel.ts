@@ -10,7 +10,7 @@ interface UserAttributes {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface UserCreationAttributes extends Optional<UserAttributes, 'id'> {}
+interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'accessToken' | 'refreshToken' | 'expiresIn'> {}
 
 
 export class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes  {

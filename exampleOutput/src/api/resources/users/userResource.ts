@@ -5,7 +5,7 @@ import { Sequelize } from 'sequelize/types';
 import UserRepresentation from './userRepresentation';
 import { Logger } from '../../../logger';
 import StarterResource, { TokenResolver } from '../../core/starterResource';
-import { AuthFormat } from '../../core/tokenResolver';
+import { AuthFormat, JWTTokenResolver } from '../../core/tokenResolver';
 import { APIConfig } from '../../api';
 
 const { NotFoundError, ForbiddenError } = HTTPErrors;
@@ -15,7 +15,7 @@ const { MEDIA_JSON, MEDIA_JSON_MERGE, AUTH_BEARER } = CONSTANTS;
 export default class UserResource extends StarterResource<UserRepresentation, User, AuthFormat> {
 	constructor(dbConnection: Sequelize,
 		logger: Logger,
-		tokenResolver: TokenResolver<AuthFormat>,
+		tokenResolver: JWTTokenResolver,
 		config: APIConfig) {
 
 		super(dbConnection, logger, tokenResolver, config);
@@ -136,7 +136,7 @@ export default class UserResource extends StarterResource<UserRepresentation, Us
 
 		if (action === 'fullReplace') {
 			return User.build({
-				remoteId: urlParams.remote_id,
+				remoteId: String(urlParams.remote_id),
 				active: 1
 			});
 		}
