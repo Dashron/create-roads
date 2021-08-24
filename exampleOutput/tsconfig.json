@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "outDir": "./dist/node",
+        "outDir": "./dist",
         "target": "es2015",
         "module": "CommonJS",
         "moduleResolution": "node",
@@ -8,16 +8,7 @@
         "strictNullChecks": true,
         "noImplicitThis": true,
         "alwaysStrict": true,
-        "baseUrl": ".",
-        "paths": {
-			"@src/*": ["./src/*"],
-			"@api-core/*": ["./src/api/core/*"],
-			"@web-core/*": ["./src/web/core/*"],
-            "*": [
-                "node_modules/*",
-                "src/types/*"
-            ],
-        },
+        "baseUrl": "./src",
         "allowSyntheticDefaultImports": true,
         "declaration": true,
         "declarationDir": "./types"

@@ -1,7 +1,7 @@
 import { Logger } from '../logger';
 import { Router } from 'roads-api';
 import { StarterResourceConfig } from './core/starterResource';
-import { Sequelize } from 'sequelize/types';
+import { Sequelize } from 'sequelize';
 import { JWTTokenResolver } from './core/tokenResolver';
 export interface APIConfig extends StarterResourceConfig {
     cors: {
@@ -25,7 +25,7 @@ export interface APIConfig extends StarterResourceConfig {
     port: number;
     host: string;
     hostname: string;
-    credentials: {
+    credentials?: {
         privateKey: string;
         certificate: string;
     };

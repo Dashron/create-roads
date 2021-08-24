@@ -20,6 +20,7 @@
     "browserify": "^17.0.0",
     "cookie": "^0.4.1",
     "jsonwebtoken": "^8.5.1",
+    "pg": "^8.7.1",
     "roads": "7.0.0",
     "roads-api": "2.0.1",
     "roads-server": "1.0.4",

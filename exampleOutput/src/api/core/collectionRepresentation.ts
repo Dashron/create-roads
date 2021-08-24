@@ -1,4 +1,5 @@
-import JSONRepresentation, { ResolveArrayItems } from 'roads-api/types/Representation/jsonRepresentation';
+import { JSONRepresentation } from "roads-api";
+import { ResolveArrayItems } from "roads-api/types/Representation/jsonRepresentation";
 
 export interface Collection<item> {
 	data: Array<item>,

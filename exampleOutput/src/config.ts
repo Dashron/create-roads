@@ -6,7 +6,8 @@ export default function (folderPath: string, prefix: string = 'config', environm
 	let environmentConfig = {};
 
 	for (let i = 0; i < files.length; i++) {
-		if (files[i] === `${prefix}.${  environment  }.js`) {
+		if (files[i] === `${prefix}.${environment}.json`) {
+			console.info(`loading config file ${folderPath}/${files[i]}`);
 			environmentConfig = require(path.format({
 				dir: folderPath,
 				base: files[i]

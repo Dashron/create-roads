@@ -1,11 +1,11 @@
 import { Sequelize } from 'sequelize/types';
 import { Example } from './exampleModel';
 import { ExampleFormat } from './exampleRepresentation';
-import StarterResource from '@api-core/starterResource';
-import { AuthFormat, JWTTokenResolver } from '@api-core/tokenResolver';
-import { Logger } from '@src/logger';
-import { APIConfig } from '@src/api/api';
-import CollectionRepresentation from '@api-core/collectionRepresentation';
+import StarterResource from '../../core/starterResource';
+import { AuthFormat, JWTTokenResolver } from '../../core/tokenResolver';
+import { Logger } from '../../../logger';
+import { APIConfig } from '../../api';
+import CollectionRepresentation from '../../core/collectionRepresentation';
 import { ActionList, ParsedURLParams } from 'roads-api/types/Resource/resource';
 declare type ExampleCollection = {
     examples?: Array<Example>;

@@ -4,9 +4,9 @@ import { buildLoggerMiddleware, createLogger, Logger } from '../logger';
 import { Router } from 'roads-api';
 import { Server } from 'roads-server';
 import { StarterResourceConfig } from './core/starterResource';
-import * as exampleAPI from '@src/api/resources/example/index';
-import * as usersAPI from '@src/api/resources/users/index';
-import { Sequelize } from 'sequelize/types';
+import * as exampleAPI from './resources/example/index';
+import * as usersAPI from './resources/users/index';
+import { Sequelize } from 'sequelize';
 import { JWTTokenResolver } from './core/tokenResolver';
 
 export interface APIConfig extends StarterResourceConfig {
@@ -31,7 +31,7 @@ export interface APIConfig extends StarterResourceConfig {
 	port: number,
 	host: string,
 	hostname: string,
-	credentials: {
+	credentials?: {
 		privateKey: string,
 		certificate: string
 	},

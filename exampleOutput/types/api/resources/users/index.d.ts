@@ -1,2 +1,2 @@
-import { RegisterFn } from '@src/api/api';
+import { RegisterFn } from '../../api';
 export declare const register: RegisterFn;

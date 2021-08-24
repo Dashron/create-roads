@@ -1,6 +1,6 @@
 import { JSONRepresentation } from 'roads-api';
 import { User } from './userModel';
-import { AuthFormat } from '@api-core/tokenResolver';
+import { AuthFormat } from '../../core/tokenResolver';
 export interface UserFormat {
     id: number;
     createdTime: string;

@@ -2,13 +2,16 @@ import { Sequelize } from 'sequelize/types';
 
 import { Example } from './exampleModel';
 import ExampleRepresentation, { ExampleFormat } from './exampleRepresentation';
-import StarterResource from '@api-core/starterResource';
-import { AuthFormat, JWTTokenResolver } from '@api-core/tokenResolver';
-import { Logger } from '@src/logger';
-import { APIConfig } from '@src/api/api';
-import CollectionRepresentation from '@api-core/collectionRepresentation';
-import { ForbiddenError } from 'roads-api/types/core/httpErrors';
-import { AUTH_BEARER, MEDIA_JSON } from 'roads-api/types/core/constants';
+import StarterResource from '../../core/starterResource';
+import { AuthFormat, JWTTokenResolver } from '../../core/tokenResolver';
+import { Logger } from '../../../logger';
+import { APIConfig } from '../../api';
+import CollectionRepresentation from '../../core/collectionRepresentation';
+
+import { CONSTANTS, HTTPErrors } from 'roads-api';
+const { ForbiddenError } = HTTPErrors;
+const { AUTH_BEARER, MEDIA_JSON } = CONSTANTS;
+
 import { ActionList, ParsedURLParams } from 'roads-api/types/Resource/resource';
 
 type ExampleCollection = { examples?: Array<Example> };

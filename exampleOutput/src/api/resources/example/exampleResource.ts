@@ -8,13 +8,14 @@ import {
 	getWithoutSoftFn,
 	partialEditFn,
 	softDeleteFn
-} from '@api-core/resourceDefaults';
+} from '../../core/resourceDefaults';
 
-import StarterResource from '@api-core/starterResource';
-import { AuthFormat, JWTTokenResolver } from '@api-core/tokenResolver';
-import { Logger } from '@src/logger';
-import { APIConfig } from '@src/api/api';
-import { AUTH_BEARER, MEDIA_JSON, MEDIA_JSON_MERGE } from 'roads-api/types/core/constants';
+import StarterResource from '../../core/starterResource';
+import { AuthFormat, JWTTokenResolver } from '../../core/tokenResolver';
+import { Logger } from '../../../logger';
+import { APIConfig } from '../../api';
+import { CONSTANTS } from 'roads-api';
+const {AUTH_BEARER, MEDIA_JSON, MEDIA_JSON_MERGE }  = CONSTANTS;
 
 const { NotFoundError } = HTTPErrors;
 

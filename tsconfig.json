@@ -9,12 +9,6 @@
         "noImplicitThis": true,
         "alwaysStrict": true,
         "baseUrl": ".",
-        "paths": {
-            "*": [
-                "node_modules/*",
-                "src/types/*"
-            ]
-        },
 		"types": ["node"],
         "allowSyntheticDefaultImports": true,
         "declaration": true,
