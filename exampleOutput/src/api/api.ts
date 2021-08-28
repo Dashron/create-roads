@@ -7,7 +7,7 @@ import { StarterResourceConfig } from './core/starterResource';
 import * as exampleAPI from './resources/example/index';
 import * as usersAPI from './resources/users/index';
 import { Sequelize } from 'sequelize';
-import { JWTTokenResolver } from './core/tokenResolver';
+import tokenResolver, { JWTTokenResolver } from './core/tokenResolver';
 
 export interface APIConfig extends StarterResourceConfig {
 	cors: {
@@ -64,7 +64,7 @@ export class API {
 		// Assign logging middleware
 		this.logger = createLogger('api-server');
 		this.connection = this.buildConnection();
-
+		this.tokenResolver = tokenResolver(this.connection, this.logger, this.config);
 		this.road.use(buildLoggerMiddleware(this.logger));
 
 		this.road.use(CorsMiddleware.build({

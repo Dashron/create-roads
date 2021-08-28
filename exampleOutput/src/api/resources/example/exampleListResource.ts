@@ -32,6 +32,7 @@ export default class ExampleListResource extends StarterResource<ExampleCollecti
 		this.addAction('get', () => {
 			return;
 		}, {
+			authRequired: true,
 			authSchemes: { [AUTH_BEARER]: tokenResolver },
 			responseMediaTypes: {
 				[MEDIA_JSON]: new CollectionRepresentation('get',
