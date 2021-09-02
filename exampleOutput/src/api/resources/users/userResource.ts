@@ -4,15 +4,16 @@ import { HTTPErrors, CONSTANTS } from 'roads-api';
 import { Sequelize } from 'sequelize/types';
 import UserRepresentation from './userRepresentation';
 import { Logger } from '../../../logger';
-import StarterResource, { TokenResolver } from '../../core/starterResource';
+import StarterResource from '../../core/starterResource';
 import { AuthFormat, JWTTokenResolver } from '../../core/tokenResolver';
 import { APIConfig } from '../../api';
+import { Request } from 'roads';
 
-const { NotFoundError, ForbiddenError } = HTTPErrors;
+const { NotFoundError, ForbiddenError, InvalidRequestError } = HTTPErrors;
 const { MEDIA_JSON, MEDIA_JSON_MERGE, AUTH_BEARER } = CONSTANTS;
 
 
-export default class UserResource extends StarterResource<UserRepresentation, User, AuthFormat> {
+export default class UserResource extends StarterResource<UserRepresentation, User, AuthFormat | undefined> {
 	constructor(dbConnection: Sequelize,
 		logger: Logger,
 		tokenResolver: JWTTokenResolver,
@@ -20,10 +21,23 @@ export default class UserResource extends StarterResource<UserRepresentation, Us
 
 		super(dbConnection, logger, tokenResolver, config);
 
-		// todo: I don't know what the purpose of this endpoint is?
-		/*this.addAction('fullReplace', async (
+		const commonConfig = {
+			authSchemes: { [AUTH_BEARER]: tokenResolver },
+			defaultResponseMediaType: MEDIA_JSON,
+			defaultRequestMediaType: MEDIA_JSON_MERGE,
+			authRequired: true
+		}
+
+		/**
+		 * This endpoint is how new users are registered via an AWS Cognito ID.
+		 * todo: Do we want this to be remote ID or email in the url? if the remote Id exists we want to replace, but the email
+		 * should get priority.
+		 * - I think if the email exists and the remote id is different we should change the remote id (check cognito, can this happen?)
+		 * - I think if the remote ID exists and the email doesn't, we should.... what? ugh. TODO: later
+		 */
+		this.addAction('fullReplace', async (
 			models,
-			requestBody,
+			requestBody: UserRepresentation & { accessToken: string },
 			requestMediaHandler,
 			auth) => {
 
@@ -34,11 +48,11 @@ export default class UserResource extends StarterResource<UserRepresentation, Us
 			// Ensure that the user being registered via amazon cognito actually exists in amazon cognito.
 			// This is a lightweight check to ensure all data to this endpoint is valid, as opposed to forcing
 			//		some form of authentication on this endpoint
-			// Note: this might be better as a part of the userRepresentation Validation. Maybe a new "validate multi"
-			//		function or something.
+			// Note: Should this be part of the representation validation?
+			//		e.g. access token is only valid if I can make this external request
 			const cognitoRequest = new Request(true, config.cognito.url, config.cognito.port);
 			const authResponse = await cognitoRequest.request('GET', '/oauth2/userInfo', undefined, {
-				authorization: `Bearer ${  requestBody.accessToken}`
+				authorization: `Bearer ${requestBody.accessToken}`
 			});
 
 			const parsedResponse = JSON.parse(authResponse.body);
@@ -48,20 +62,17 @@ export default class UserResource extends StarterResource<UserRepresentation, Us
 
 			if (requestMediaHandler) {
 				await requestMediaHandler.applyEdit(requestBody, models, auth);
+				models.source = 'aws-cognito';
 				return models.save();
 			}
 		}, {
-			authSchemes: { [ AUTH_BEARER ]: tokenResolver },
+			...commonConfig,
 			requestMediaTypes: { [MEDIA_JSON]: new UserRepresentation('fullReplace') },
 			responseMediaTypes: { [MEDIA_JSON]: new UserRepresentation('fullReplace') },
-			defaultRequestMediaType: MEDIA_JSON,
-			defaultResponseMediaType: MEDIA_JSON,
-			// todo: currently we just validate that the user id exists. this makes it hard to create users without
-			//		 getting amazon involved
-			// ideally as an extra step we would require auth on this, and force clients to get a client auth token
-			//		before adding users.
+			// todo: currently we just validate that the passed access token is legit. We should require
+			//		a client access token here too for stronger regulation
 			authRequired: false
-		});*/
+		});
 
 		this.addAction('partialEdit', (models, requestBody, requestMediaHandler, auth) => {
 
@@ -76,12 +87,9 @@ export default class UserResource extends StarterResource<UserRepresentation, Us
 				return models.save();
 			}
 		}, {
-			authSchemes: { [AUTH_BEARER]: tokenResolver },
+			...commonConfig,
 			responseMediaTypes: { [MEDIA_JSON]: new UserRepresentation('get') },
-			defaultResponseMediaType: MEDIA_JSON,
 			requestMediaTypes: { [MEDIA_JSON_MERGE]: new UserRepresentation('partialEdit') },
-			defaultRequestMediaType: MEDIA_JSON_MERGE,
-			authRequired: true
 		});
 
 		this.addAction('get', (models, requestBody, requestMediaHandler, auth) => {
@@ -90,27 +98,23 @@ export default class UserResource extends StarterResource<UserRepresentation, Us
 				throw new ForbiddenError('You do not have permission to view this resource');
 			}
 		}, {
-			authSchemes: { [ AUTH_BEARER ]: tokenResolver },
+			...commonConfig,
 			responseMediaTypes: { [MEDIA_JSON]: new UserRepresentation('get') },
-			defaultResponseMediaType: MEDIA_JSON,
-			defaultRequestMediaType: MEDIA_JSON,
-			authRequired: true
 		});
 
 		this.addAction('delete', (models, requestBody, requestMediaHandler, auth) => {
 			// auth is valid if we get to this point, but I'm checking for auth here to protect against bugs
 			// this would be a good dbConnection to check auth roles
-			if (!auth || auth.id != models.id) {
+			console.log('role', auth ? auth.role : 'no auth');
+			if (!auth || auth.role !== 'admin') {
 				throw new ForbiddenError('You do not have permission to manipulate this resource');
 			}
 
 			models.active = 0;
 			return models.save();
 		}, {
-			authSchemes: { [AUTH_BEARER]: tokenResolver },
-			defaultResponseMediaType: MEDIA_JSON,
+			...commonConfig,
 			responseMediaTypes: { [MEDIA_JSON]: new UserRepresentation('delete') },
-			authRequired: true
 		});
 	}
 

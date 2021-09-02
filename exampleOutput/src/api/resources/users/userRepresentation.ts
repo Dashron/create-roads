@@ -6,11 +6,14 @@ import { AuthFormat } from '../../core/tokenResolver';
 export interface UserFormat {
 	id: number;
 	createdTime: string;
-	accessToken: string;
-	refreshToken: string;
+	accessToken?: string;
+	refreshToken?: string;
 	remoteId: number;
 	expiresIn: number;
 	active: boolean;
+	role: string;
+	email: string;
+	source: string;
 }
 
 export default class UserRepresentation extends JSONRepresentation<UserFormat, User, AuthFormat> {
@@ -29,6 +32,7 @@ export default class UserRepresentation extends JSONRepresentation<UserFormat, U
 				},
 				createdTime: {
 					type: 'string',
+					roadsReadOnly: true,
 					resolve: (models: User) => {
 						return models.createdAt;
 					},
@@ -36,7 +40,11 @@ export default class UserRepresentation extends JSONRepresentation<UserFormat, U
 				},
 				accessToken: {
 					type: 'string',
-					resolve: (models: User) => {
+					resolve: (models: User, requestAuth: any) => {
+						if (action === 'get-list' || !requestAuth || requestAuth.id !== models.id) {
+							return undefined;
+						}
+
 						return models.accessToken;
 					},
 					set: (models: User, accessToken: string, requestAuth: any) => {
@@ -45,7 +53,11 @@ export default class UserRepresentation extends JSONRepresentation<UserFormat, U
 				},
 				refreshToken: {
 					type: 'string',
-					resolve: (models: User) => {
+					resolve: (models: User, requestAuth: any) => {
+						if (action === 'get-list' || !requestAuth || requestAuth.id !== models.id) {
+							return undefined;
+						}
+
 						return models.refreshToken;
 					},
 					set: (models: User, refreshToken: string, requestAuth: any) => {
@@ -64,7 +76,7 @@ export default class UserRepresentation extends JSONRepresentation<UserFormat, U
 				expiresIn: {
 					type: 'number',
 					resolve: (models: User) => {
-						return models.expiresIn;
+						return action === 'get-list' ? 0 : models.expiresIn;
 					},
 					set: (models: User, expiresIn: number, requestAuth: any) => {
 						models.expiresIn = expiresIn;
@@ -77,6 +89,39 @@ export default class UserRepresentation extends JSONRepresentation<UserFormat, U
 					},
 					set: (models: User, active: boolean, requestAuth: any) => {
 						models.active = active ? 1 : 0;
+					}
+				},
+				role: {
+					type: 'string',
+					resolve: (models: User) => {
+						return models.role;
+					},
+					set: (models: User, role: string, requestAuth: any) => {
+						if (requestAuth.role !== 'admin') {
+							throw new Error('You do not have permission to change the role');
+						}
+
+						models.role = role;
+					}
+				},
+				email: {
+					type: 'string',
+					resolve: (models: User, requestAuth: AuthFormat) => {
+						if (!requestAuth || requestAuth.role !== 'admin') {
+							return undefined;
+						}
+
+						return models.email;
+					},
+					set: (models: User, email: string, requestAuth: AuthFormat) => {
+						models.email = email;
+					}
+				},
+				source: {
+					type: 'string',
+					roadsReadOnly: true,
+					resolve: (models: User) => {
+						return models.source;
 					}
 				}
 			},

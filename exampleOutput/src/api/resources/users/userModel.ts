@@ -7,10 +7,13 @@ interface UserAttributes {
     refreshToken: string;
     expiresIn: number;
     active: number;
+	role: string;
+	email: string;
+	source: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'accessToken' | 'refreshToken' | 'expiresIn'> {}
+interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'accessToken' | 'refreshToken' | 'expiresIn' | 'role' | 'email' | 'source'> {}
 
 
 export class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes  {
@@ -20,6 +23,9 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
     public refreshToken!: string;
     public expiresIn!: number;
     public active!: number;
+	public role!: string;
+	public email!: string;
+	public source!: string;
 
     // timestamps!
     public readonly createdAt!: Date;
@@ -36,24 +42,34 @@ export default (sequelize: Sequelize): void => {
 		},
 		accessToken: {
 			type: DataTypes.TEXT,
-			allowNull: false
 		},
 		remoteId: {
 			type: DataTypes.TEXT,
-			allowNull: false
 		},
 		refreshToken: {
 			type: DataTypes.TEXT,
-			allowNull: false
 		},
 		expiresIn: {
 			type: DataTypes.INTEGER,
-			allowNull: false
 		},
 		active: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
 			defaultValue: 1
+		},
+		role: {
+			type: DataTypes.STRING,
+			allowNull: true,
+			defaultValue: 'user'
+		},
+		email: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			unique: true
+		},
+		source: {
+			type: DataTypes.STRING,
+			allowNull: false
 		}
 	}, {
 		tableName: 'users',

@@ -106,7 +106,7 @@ export class API {
 		server.listen(this.config.port, this.config.host);
 	}
 
-	protected createDbTables () {
+	public createDBTables () {
 		this.connection.sync();
 	}
 

@@ -25,11 +25,12 @@
     "roads-api": "2.0.1",
     "roads-server": "1.0.4",
     "sequelize": "^6.6.5",
+    "tsc-watch": "^4.5.0",
     "watchify": "^4.0.0"
   },
   "private": true,
   "scripts": {
-    "start": "tsc && node dist/node/start.js",
+    "start-dev": "node_modules/tsc-watch/index.js --onSuccess \"node dist/start.js\"",
     "build": "tsc && node dist/node/buildClient.js"
   }
 }

@@ -4,11 +4,14 @@ import { AuthFormat } from '../../core/tokenResolver';
 export interface UserFormat {
     id: number;
     createdTime: string;
-    accessToken: string;
-    refreshToken: string;
+    accessToken?: string;
+    refreshToken?: string;
     remoteId: number;
     expiresIn: number;
     active: boolean;
+    role: string;
+    email: string;
+    source: string;
 }
 export default class UserRepresentation extends JSONRepresentation<UserFormat, User, AuthFormat> {
     constructor(action: string);

@@ -4,13 +4,14 @@ An initalizer package for a roads project (replaces roads starter)
 
 
 # TODO
-1. Get roads-api example running (setup config, run, debug)
-2. Clean up the api example. wtf is with all the generics all over the place, the code is awful looking. can we define generics in one place? can we use factories to mask the amount of consistent initial parameters we're using?
-3. Get web example running (vitejs.dev? matuzo.at/blog/html-boilerplate?)
-4. Hook together api and web examples
-5. Add proper config support
-6. Have a configured option for roads to reroute to roads api
-7. Pull the auto reload work from my other project (reload runner on file change, rebuild on file change, tsc on file change)
+1. Test example resource endpoints
+2. Copy roads-api endpoints over to the templates (maybe write a script for this??)
+3. Clean up the api example. wtf is with all the generics all over the place, the code is awful looking. can we define generics in one place? can we use factories to mask the amount of consistent initial parameters we're using?
+4. Get web example running (vitejs.dev? matuzo.at/blog/html-boilerplate?)
+5. Hook together api and web examples
+6. Add proper config support
+7. Have a configured option for roads to reroute to roads api
+8.  Pull the auto reload work from my other project (reload runner on file change, rebuild on file change, tsc on file change)
 Bring over some of the improvements from dd:
 - template reloading
 - live static file reloading

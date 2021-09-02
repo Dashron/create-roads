@@ -43,7 +43,7 @@ export declare class API {
     private tokenResolver;
     constructor(config: APIConfig);
     start(): void;
-    protected createDbTables(): void;
+    createDBTables(): void;
     protected buildConnection(): Sequelize;
     protected registerProjects(projects: Array<{
         register: RegisterFn;
