@@ -1,0 +1,76 @@
+{
+  "name": "create-roads",
+  "version": "0.1.0",
+  "description": "Scaffolding tool for Roads.js applications",
+  "type": "module",
+  "bin": {
+    "create-roads": "./dist/bin/run.js"
+  },
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build",
+    "test": "npm run build && echo 'CLI build successful - use npm run test:default or npm run test:spa to test functionality'",
+    "test:default": "npm run build && node dist/bin/run.js test-project --template default --skip-install",
+    "test:spa": "npm run build && node dist/bin/run.js test-project-spa --template spa --skip-install"
+  },
+  "oclif": {
+    "bin": "create-roads",
+    "dirname": "create-roads",
+    "commands": "./dist/commands",
+    "plugins": [
+      "@oclif/plugin-help"
+    ],
+    "helpClass": "@oclif/plugin-help"
+  },
+  "files": [
+    "dist",
+    "templates",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/user/create-roads.git"
+  },
+  "bugs": {
+    "url": "https://github.com/user/create-roads/issues"
+  },
+  "homepage": "https://github.com/user/create-roads#readme",
+  "keywords": [
+    "roads",
+    "typescript",
+    "react",
+    "ssr",
+    "spa",
+    "scaffolding",
+    "cli",
+    "boilerplate",
+    "generator"
+  ],
+  "author": {
+    "name": "Aaron Hedges",
+    "email": "aaron@dashron.com",
+    "url": "http://www.dashron.com"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@oclif/core": "^4.5.2",
+    "@oclif/plugin-help": "^6.2.32",
+    "@oclif/plugin-plugins": "^5.4.46",
+    "minimatch": "^9.0.3",
+    "prompts": "^2.4.2"
+  },
+  "devDependencies": {
+    "@oclif/test": "^4.1.13",
+    "@types/minimatch": "^5.1.2",
+    "@types/node": "^22.13.10",
+    "@types/prompts": "^2.4.9",
+    "tsx": "^4.20.5",
+    "typescript": "^5.8.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

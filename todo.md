@@ -1,0 +1,1 @@
+I *think* we can just set up a separate layout for the SPA instead of requiring an entirely different project. 

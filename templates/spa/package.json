@@ -1,0 +1,34 @@
+{
+  "name": "{{packageName}}",
+  "version": "0.1.0",
+  "description": "{{description}}",
+  "scripts": {
+    "start": "npx http-server ./public -c-1",
+    "watch-all": "npm run build && npx http-server ./public -c-1",
+    "build": "npm run build-js && npm run build-css",
+    "build-js": "./node_modules/.bin/esbuild ./src/main.tsx --bundle --outdir=./public/js --tsconfig=./tsconfig.json",
+    "build-css": "npx @tailwindcss/cli -i ./css/input.css -o ./public/css/main.css -c ./tailwind.config.js",
+    "watch-css": "npx @tailwindcss/cli -i ./css/input.css -o ./public/css/main.css -c ./tailwind.config.js --watch"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.16",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "esbuild": "^0.24.2",
+    "tailwindcss": "^4.0.1"
+  },
+  "dependencies": {
+    "peerjs": "^1.5.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "roads": "8.0.1"
+  },
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "./types/index.d.ts",
+  "files": [
+    "dist",
+    "types"
+  ]
+}

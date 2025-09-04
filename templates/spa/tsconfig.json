@@ -1,0 +1,32 @@
+{
+	"compilerOptions": {
+		"outDir": "./public/js",
+		"target": "ES2022",
+		"module": "ES2022",
+		"moduleResolution": "bundler",
+		"noImplicitAny": true,
+		"strictNullChecks": true,
+		"noImplicitThis": true,
+		"alwaysStrict": true,
+		"baseUrl": "./src",
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": false,
+		"declaration": true,
+		"declarationDir": "./types",
+		"types": ["react", "react-dom"],
+		"lib": ["ES2022", "DOM", "DOM.Iterable"],
+		"declarationMap": true,
+		"skipLibCheck": true,
+		"jsx": "react-jsx",
+		"sourceMap": true,
+		"inlineSources": true,
+		"sourceRoot": "/",
+		"noErrorTruncation": true,
+		"noEmitOnError": true,
+		"resolveJsonModule": true,
+	},
+	"exclude": ["src/tests", "node_modules"],
+	"include": [
+		"src/main.tsx"
+	]
+}

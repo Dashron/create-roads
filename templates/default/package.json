@@ -1,0 +1,37 @@
+{
+  "name": "{{packageName}}",
+  "version": "0.1.0",
+  "description": "{{description}}",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.8",
+    "@tailwindcss/postcss": "^4.1.8",
+    "@types/node": "^22.13.10",
+    "@types/react-dom": "^19.0.4",
+    "esbuild": "0.25.0",
+    "glob": "^11.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "tailwindcss": "^4.1.8",
+    "tsc-watch": "^7.1.1"
+  },
+  "dependencies": {
+    "@types/express": "^5.0.1",
+    "@types/jsonwebtoken": "^9.0.9",
+    "brfs": "2.0.2",
+    "express": "^4.21.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-error-boundary": "^5.0.0",
+    "roads": "8.0.1",
+    "typescript": "^5.8.2"
+  },
+  "private": true,
+  "scripts": {
+    "start": "tsc && node dist/node/server.js ./tsconfig.json",
+    "watch-all": "npm run build-js && node dist/node/watchAll.js --watch",
+    "build-js": "tsc",
+    "build-css": "npx @tailwindcss/cli -i ./src/css/input.css -o ./public/css/main.css -c ./tailwind.config.js",
+    "watch-css": "npx @tailwindcss/cli -i ./src/css/input.css -o ./public/css/main.css  -c ./tailwind.config.js --watch"
+  },
+  "type": "module",
+  "license": "MIT"
+}
