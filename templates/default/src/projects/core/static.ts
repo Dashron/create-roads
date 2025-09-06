@@ -1,8 +1,14 @@
 import * as fs from 'fs';
 
 import { glob } from 'glob';
-import * as pathModule from 'path';
-import { staticPathRoot, staticUrlRoot, returnFile, dirname, getReactUrl, getReactBuildPath, projectRoute } from './staticUtil.js';
+import { 
+	staticPathRoot, 
+	staticUrlRoot, 
+	returnFile, 
+	getReactUrl, 
+	getReactBuildPath, 
+	projectRoute 
+} from './staticUtil.js';
 import { RouterMiddleware, StoreValsMiddleware, ModifiedSinceMiddleware } from 'roads';
 
 export const sourcemap = true;
@@ -84,10 +90,13 @@ ESBUILD_CHUNK_FILES.forEach((filename) => {
 	}
 });
 
-export const register = function register(router: RouterMiddleware.Router<StoreValsMiddleware.StoreValsContext & ModifiedSinceMiddleware.ModifiedSinceContext>) {
+export const register = function register(
+	router: RouterMiddleware.Router<StoreValsMiddleware.StoreValsContext & 
+		ModifiedSinceMiddleware.ModifiedSinceContext>
+) {
 	Object.keys(STATIC_FILES).forEach((key: keyof typeof STATIC_FILES) => {
 		const details = STATIC_FILES[key];
-console.log('adding route', key);
+		console.log('adding route', key);
 		router.addRoute('GET', key, async function getStaticFile() {
 			console.log('route hit', key);
 			return returnFile(this, details.filePath, details.contentType);

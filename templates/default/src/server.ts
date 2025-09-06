@@ -74,7 +74,7 @@ app.set('etag', false);
 app.use(express.raw({ type: '*/*' }));
 app.use(roadsExpressMiddleware(road));
 
-app.use((error: Error, req: any, res: any, next: any) => {
+app.use((error: Error, req: Express.Request, res: Express.Response, _next: Express.NextFunction) => {
 	console.error(error, { path: req.path, method: req.method });
 
 	res.statusCode = 500;

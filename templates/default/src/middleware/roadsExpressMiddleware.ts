@@ -22,7 +22,8 @@ export function roadsExpressMiddleware(road: Road) {
 			}
 			next();
 		} catch (err) {
-			// we call next here so we can rely on additional express middleware such as sentry, as opposed to our own. if we want to design this page better it would be in express
+			// we call next here so we can rely on additional express middleware such as sentry,
+		// as opposed to our own. if we want to design this page better it would be in express
 			next(err);
 		}
 	};

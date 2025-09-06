@@ -6,16 +6,22 @@
     "start": "npx http-server ./public -c-1",
     "watch-all": "npm run build && npx http-server ./public -c-1",
     "build": "npm run build-js && npm run build-css",
-    "build-js": "./node_modules/.bin/esbuild ./src/main.tsx --bundle --outdir=./public/js --tsconfig=./tsconfig.json",
+    "build-js": "npm run lint && ./node_modules/.bin/esbuild ./src/main.tsx --bundle --outdir=./public/js --tsconfig=./tsconfig.json",
     "build-css": "npx @tailwindcss/cli -i ./css/input.css -o ./public/css/main.css -c ./tailwind.config.js",
-    "watch-css": "npx @tailwindcss/cli -i ./css/input.css -o ./public/css/main.css -c ./tailwind.config.js --watch"
+    "watch-css": "npx @tailwindcss/cli -i ./css/input.css -o ./public/css/main.css -c ./tailwind.config.js --watch",
+    "lint": "eslint src/ --ext .js,.ts,.tsx",
+    "lint:fix": "eslint src/ --ext .js,.ts,.tsx --fix"
   },
   "license": "MIT",
   "devDependencies": {
+    "@eslint/js": "^9.34.0",
     "@tailwindcss/typography": "^0.5.16",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
+    "@typescript-eslint/eslint-plugin": "^8.42.0",
+    "@typescript-eslint/parser": "^8.42.0",
     "esbuild": "^0.24.2",
+    "eslint": "^9.34.0",
     "tailwindcss": "^4.0.1"
   },
   "dependencies": {

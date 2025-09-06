@@ -64,7 +64,8 @@ export default function createAddLayoutMiddleware(layoutWrapper: LayoutWrapper) 
 	 * @param {object} headers - HTTP request headers
 	 * @param {function} next - When called, this function will execute the next step in the roads method chain
 	 */
-	const middleware: Middleware<StoreValsMiddleware.StoreValsContext> = function addLayoutMiddleware(this: StoreValsMiddleware.StoreValsContext, method, url, body, headers, next) {
+	const middleware: Middleware<StoreValsMiddleware.StoreValsContext> = 
+		function addLayoutMiddleware(this: StoreValsMiddleware.StoreValsContext, method, url, body, headers, next) {
 		this.setTitle = (title: string) => {
 			this.storeVal(TITLE_KEY, title);
 		};
@@ -87,7 +88,12 @@ export default function createAddLayoutMiddleware(layoutWrapper: LayoutWrapper) 
 			let layoutData: Record<string, unknown> = { twLastUpdateTime };
 
 			if (this.getAllVals) {
-				layoutData = { twLastUpdateTime, host: headers?.host, loggedIn: this.getVal('loggedIn'), ...this.getAllVals() };
+				layoutData = { 
+				twLastUpdateTime, 
+				host: headers?.host, 
+				loggedIn: this.getVal('loggedIn'), 
+				...this.getAllVals() 
+			};
 			}
 
 			res.body = layoutWrapper(res, layoutData, this);

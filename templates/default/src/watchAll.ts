@@ -10,7 +10,7 @@ var child: ReturnType<typeof spawn> | null = null;
 const __dirname = import.meta.dirname;
 
 const cssIn = `${__dirname}/../../css/input.css`;
-const cssOut = `${staticPathRoot}/css/main.css`
+const cssOut = `${staticPathRoot}/css/main.css`;
 
 watch.on('started', () => {
 	console.log('Compilation started');

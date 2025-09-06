@@ -10,7 +10,11 @@ export const staticUrlRoot = '/static/';
 export const staticPathRoot = `${pathModule.resolve(`${dirname}../../../../public`)}/`;
 export const projectRoute = `${pathModule.resolve(`${dirname}../../../../src/projects`)}/`;
 
-export function returnFile(context: StoreValsMiddleware.StoreValsContext & ModifiedSinceMiddleware.ModifiedSinceContext, filePath: string, contentType: string) {
+export function returnFile(
+	context: StoreValsMiddleware.StoreValsContext & ModifiedSinceMiddleware.ModifiedSinceContext,
+	filePath: string,
+	contentType: string
+) {
 	context.storeVal('ignoreLayout', true);
 	const stat = fs.statSync(filePath);
 
@@ -36,7 +40,9 @@ export interface staticBundleRecord {
 }
 
 export function getReactUrl(path: string, sourcemap: boolean, includeLastModified: boolean) {
-	return `${staticUrlRoot}js/${path}.js${sourcemap ? '.map' : ''}${includeLastModified ? `?q=${getLastModifiedTime(`${projectRoute}${path}`)}` : ''}`;
+	const sourcemapExt = sourcemap ? '.map' : '';
+	const queryParam = includeLastModified ? `?q=${getLastModifiedTime(`${projectRoute}${path}`)}` : '';
+	return `${staticUrlRoot}js/${path}.js${sourcemapExt}${queryParam}`;
 }
 
 export function getReactSrcPath(path: string) {

@@ -22,14 +22,22 @@ export type CSRFBody = {
 };
 
 export function buildCSRFToken(data: string | object | Buffer, secret: string, expiresIn: string = DEFAULT_EXPIRY_TIME) {
-	// @ts-ignore Something is wrong with the typing here. This is fine
+	// @ts-expect-error Something is wrong with the typing here. This is fine
 	return jwt.sign(data || {}, secret, {
 		expiresIn
 	});
 }
 
-export function buildCSRFMiddleware(csrfSecret: string, csrfCookie: string, csrfExpiresIn = DEFAULT_EXPIRY_TIME, runEvenInTests = false) {
-	const csrfMiddleware: Middleware<CSRFContext & StoreValsMiddleware.StoreValsContext & ParseBodyMiddleware.ParseBodyContext<CSRFBody> & CookieMiddleware.CookieContext> = function csrfMiddleware(
+export function buildCSRFMiddleware(
+	csrfSecret: string,
+	csrfCookie: string,
+	csrfExpiresIn = DEFAULT_EXPIRY_TIME,
+	runEvenInTests = false
+) {
+	const csrfMiddleware: Middleware<CSRFContext &
+		StoreValsMiddleware.StoreValsContext &
+		ParseBodyMiddleware.ParseBodyContext<CSRFBody> &
+		CookieMiddleware.CookieContext> = function csrfMiddleware(
 		method,
 		url,
 		body,
@@ -49,14 +57,20 @@ export function buildCSRFMiddleware(csrfSecret: string, csrfCookie: string, csrf
 					const cookieData = jwt.verify(cookieVal, csrfSecret, { ignoreExpiration: true });
 					// If we get invalid cookie data or data for a diff user (such as a logged out user logging in and now needing new data)
 					// Reset it and give the user a new one
-					if (typeof cookieData !== 'object' || cookieData.loggedInUserID !== this.userID || (cookieData?.exp || 0) < Math.floor(Date.now() / 1000)) {
+					if (typeof cookieData !== 'object' ||
+					cookieData.loggedInUserID !== this.userID ||
+					(cookieData?.exp || 0) < Math.floor(Date.now() / 1000)) {
 						cookieVal = undefined;
 					}
 				}
 			}
 
 			if (!cookieVal) {
-				cookieVal = buildCSRFToken({ ...data, loggedInUserID: this.userID }, csrfSecret, csrfExpiresIn);
+				cookieVal = buildCSRFToken(
+				{ ...data, loggedInUserID: this.userID },
+				csrfSecret,
+				csrfExpiresIn
+			);
 				this.setCookie(csrfCookie, cookieVal, { path: '/', sameSite: 'strict' });
 			}
 
@@ -64,7 +78,8 @@ export function buildCSRFMiddleware(csrfSecret: string, csrfCookie: string, csrf
 		};
 
 		this.getCSRFFormElement = (data?) => {
-			const element = `<input type="hidden" name="${CSRF_BODY_NAME}" value="${this.getCSRFToken(data)}">`;
+			const element = `<input type="hidden" name="${CSRF_BODY_NAME}" ` +
+			`value="${this.getCSRFToken(data)}">`;
 			this.storeVal('csrfElement', element);
 			return element;
 		};
@@ -76,7 +91,10 @@ export function buildCSRFMiddleware(csrfSecret: string, csrfCookie: string, csrf
 			}
 
 			if (Array.isArray(this.body?.[CSRF_BODY_NAME])) {
-				console.error('You have accidentally inserted two CSRF input fields. Please remove one', { path: url, method });
+				console.error(
+				'You have accidentally inserted two CSRF input fields. Please remove one',
+				{ path: url, method }
+			);
 				return false;
 			}
 
@@ -95,12 +113,14 @@ export function buildCSRFMiddleware(csrfSecret: string, csrfCookie: string, csrf
 				const cookieValidationData = jwt.verify(cookieValidationValue, csrfSecret);
 
 				// we don't ensure there's a user ID here because we might use csrf on logged out pages
-				if (!cookieBodyData || typeof cookieBodyData !== 'object' || !cookieValidationData || typeof cookieValidationData !== 'object') {
+				if (!cookieBodyData || typeof cookieBodyData !== 'object' ||
+				!cookieValidationData || typeof cookieValidationData !== 'object') {
 					console.error('bad cookie or request body jwt', { path: url, method });
 					return false;
 				}
 
-				return cookieBodyData.loggedInUserID === cookieValidationData.loggedInUserID && cookieValidationData.loggedInUserID === this.userID;
+				return cookieBodyData.loggedInUserID === cookieValidationData.loggedInUserID &&
+				cookieValidationData.loggedInUserID === this.userID;
 			} catch (e) {
 				// most common reason we hit this is jwt expiration
 				console.error(`CSRF Error: ${e.message}`, { path: url, method });
@@ -108,9 +128,13 @@ export function buildCSRFMiddleware(csrfSecret: string, csrfCookie: string, csrf
 			}
 		};
 
-		if ((method === 'POST' || method === 'PUT' || method === 'DELETE' || method === 'PATCH') && !this.isValidCSRFToken()) {
+		if ((method === 'POST' || method === 'PUT' || method === 'DELETE' || method === 'PATCH') &&
+		!this.isValidCSRFToken()) {
 			console.error('CSRF MISMATCH', { path: url, method });
-			return new Response("You've encountered an unexpected error. Please let us know you encountered this issue by contacting support.", 403);
+			return new Response(
+			'You\'ve encountered an unexpected error. Please let us know you encountered this issue by contacting support.',
+			403
+		);
 		}
 
 		return next();
