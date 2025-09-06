@@ -38,16 +38,25 @@ export default class CreateRoads extends Command {
 			description: 'Skip dependency installation',
 			default: false,
 		}),
+		verbose: Flags.boolean({
+			char: 'V',
+			description: 'Enable verbose logging',
+			default: false,
+		}),
 	};
 
 	static override args = {
 		projectName: Args.string({ description: 'Name of the project directory' }),
 	};
 
+	private verbose = false;
+
 	public async run(): Promise<void> {
 		const { args, flags } = await this.parse(CreateRoads);
 		const fileOps = new FileOperations();
 		const scaffolder = new ProjectScaffolder();
+
+		this.verbose = flags.verbose;
 
 		this.log();
 		this.log('Welcome to create-roads!');
@@ -126,18 +135,19 @@ export default class CreateRoads extends Command {
 				packageName: finalPackageName,
 				packageManager,
 				skipInstall: flags['skip-install'],
-				onProgress: this.showProgress.bind(this)
+				onProgress: this.showProgress.bind(this),
+				verbose: this.verbose,
 			});
 
 			if (result.success) {
 				if (flags['skip-install']) {
-					this.showProgress('Project scaffolded successfully! 🎉');
+					this.showProgress('Project scaffolded successfully! 🎉', undefined, undefined, true);
 				} else if (result.buildSuccess) {
-					this.showProgress('Project created successfully! 🎉');
+					this.showProgress('Project created successfully! 🎉', undefined, undefined, true);
 				} else if (result.installSuccess) {
-					this.showProgress('Project created, but build failed ⚠️');
+					this.showProgress('Project created, but build failed ⚠️', undefined, undefined, true);
 				} else {
-					this.showProgress('Project created, but dependency installation failed ⚠️');
+					this.showProgress('Project created, but dependency installation failed ⚠️', undefined, undefined, true);
 				}
 			}
 
@@ -162,7 +172,10 @@ export default class CreateRoads extends Command {
 
 
 	private showProgress(message: string, step?: number,
-		total?: number): void {
+		total?: number, force = false): void {
+		if (!this.verbose && !force) {
+			return;
+		}
 		const prefix = step && total ? `[${step}/${total}]` : '•';
 		this.log(`${prefix} ${message}`);
 	}

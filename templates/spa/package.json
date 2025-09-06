@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "description": "{{description}}",
   "scripts": {
-    "start": "npx http-server ./public -c-1",
-    "watch-all": "npm run build && npx http-server ./public -c-1",
+    "start": "npx http-server ./public -c-1 -p 8080",
+    "watch-all": "npm run build && npx http-server ./public -c-1 -p 8080",
     "build": "npm run build-js && npm run build-css",
     "build-js": "npm run lint && ./node_modules/.bin/esbuild ./src/main.tsx --bundle --outdir=./public/js --tsconfig=./tsconfig.json",
     "build-css": "npx @tailwindcss/cli -i ./css/input.css -o ./public/css/main.css -c ./tailwind.config.js",

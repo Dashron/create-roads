@@ -27,12 +27,14 @@ export function getPackageManagerCommands(pm: PackageManager): PackageManagerCom
 	}
 }
 
-export function runCommand(command: string, args: string[], cwd: string): Promise<boolean> {
+export function runCommand(command: string, args: string[], cwd: string, verbose = false): Promise<boolean> {
 	return new Promise((resolve) => {
-		console.log(`\nRunning: ${command} ${args.join(' ')}`);
+		if (verbose) {
+			console.log(`\nRunning: ${command} ${args.join(' ')}`);
+		}
 		const child = spawn(command, args, {
 			cwd,
-			stdio: 'inherit',
+			stdio: verbose ? 'inherit' : 'pipe',
 			shell: process.platform === 'win32'
 		});
 

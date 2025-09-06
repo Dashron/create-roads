@@ -76,14 +76,15 @@ export class FileOperations {
 		templateRoot: string,
 		targetRoot: string,
 		template: Template,
-		variables: TemplateVariables
+		variables: TemplateVariables,
+		verbose = false,
 	): void {
 		const write = (file: string, content?: string) => {
 			const targetPath = path.join(targetRoot, file);
 			if (content) {
 				fs.writeFileSync(targetPath, content);
 			} else {
-				this.copy(path.join(templateRoot, file), targetPath, template, variables, file);
+				this.copy(path.join(templateRoot, file), targetPath, template, variables, file, verbose);
 			}
 		};
 
@@ -126,12 +127,16 @@ export class FileOperations {
 		dest: string,
 		template: Template,
 		variables: TemplateVariables,
-		relativePath: string = ''
+		relativePath: string = '',
+		verbose = false,
 	): void {
 		const stat = fs.statSync(src);
 		if (stat.isDirectory()) {
-			this.copyDir(src, dest, template, variables, relativePath);
+			this.copyDir(src, dest, template, variables, relativePath, verbose);
 		} else {
+			if (verbose) {
+				console.log(`Copying ${relativePath}`);
+			}
 			if (this.isTextFile(src)) {
 				const content = fs.readFileSync(src, 'utf-8');
 				const substituted = this.substituteVariables(content, variables);
@@ -147,7 +152,8 @@ export class FileOperations {
 		destDir: string,
 		template: Template,
 		variables: TemplateVariables,
-		relativePath: string = ''
+		relativePath: string = '',
+		verbose = false,
 	): void {
 		fs.mkdirSync(destDir, { recursive: true });
 		for (const file of fs.readdirSync(srcDir)) {
@@ -163,7 +169,7 @@ export class FileOperations {
 
 			const srcFile = path.resolve(srcDir, file);
 			const destFile = path.resolve(destDir, file);
-			this.copy(srcFile, destFile, template, variables, currentRelativePath);
+			this.copy(srcFile, destFile, template, variables, currentRelativePath, verbose);
 		}
 	}
 }

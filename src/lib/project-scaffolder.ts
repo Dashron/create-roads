@@ -17,6 +17,7 @@ export interface ScaffoldOptions {
   packageManager: PackageManager
   skipInstall?: boolean
   onProgress?: (message: string, step?: number, total?: number) => void
+  verbose?: boolean
 }
 
 export interface ScaffoldResult {
@@ -30,7 +31,9 @@ export class ProjectScaffolder {
 	private fileOps = new FileOperations();
 
 	async scaffold(options: ScaffoldOptions): Promise<ScaffoldResult> {
-		const { targetDir, template, packageName, packageManager, skipInstall = false, onProgress } = options;
+		const {
+			targetDir, template, packageName, packageManager, skipInstall = false, onProgress, verbose = false 
+		} = options;
 
 		const root = path.join(process.cwd(), targetDir);
 		const totalSteps = skipInstall ? 3 : (template.name === 'default' ? 6 : 5);
@@ -65,7 +68,7 @@ export class ProjectScaffolder {
 			author: ''
 		};
 
-		this.fileOps.copyTemplate(templateRoot, root, template, variables);
+		this.fileOps.copyTemplate(templateRoot, root, template, variables, verbose);
 
 		// Generate package.json
 		progress('Generating package.json...');
@@ -82,7 +85,8 @@ export class ProjectScaffolder {
 		const installSuccess = await runCommand(
 			pmCommands.install.split(' ')[0],
 			pmCommands.install.split(' ').slice(1),
-			root
+			root,
+			verbose
 		);
 
 		if (!installSuccess) {
@@ -101,14 +105,16 @@ export class ProjectScaffolder {
 			buildSuccess = await runCommand(
 				pmCommands.run.split(' ')[0],
 				[...pmCommands.run.split(' ').slice(1), 'build'],
-				root
+				root,
+				verbose
 			);
 		} else if (template.name === 'spa') {
 			progress('Building SPA with npm run build...');
 			buildSuccess = await runCommand(
 				pmCommands.run.split(' ')[0],
 				[...pmCommands.run.split(' ').slice(1), 'build'],
-				root
+				root,
+				verbose
 			);
 		}
 
