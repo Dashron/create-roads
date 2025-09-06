@@ -2,7 +2,8 @@ import * as React from 'react';
 
 export const title = 'Home';
 
-export function Index(props: {}) {
+// eslint-disable-next-line no-empty-pattern
+export function Index({}: {}) {
 	return (
 		<div className="flex flex-col items-center">
 			<div className="mt-12 text-2xl">

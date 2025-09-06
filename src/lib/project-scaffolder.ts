@@ -5,7 +5,7 @@ import type { Template } from './templates.js';
 import type { TemplateVariables } from './file-operations.js';
 import { FileOperations } from './file-operations.js';
 import type { PackageManager } from './package-manager.js';
-import { getPackageManagerCommands, runCommand } from './package-manager.js';
+import { getPackageManagerCommands, runCommand, runCommandWithOutput } from './package-manager.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -25,6 +25,7 @@ export interface ScaffoldResult {
   root: string
   installSuccess?: boolean
   buildSuccess?: boolean
+  buildError?: string
 }
 
 export class ProjectScaffolder {
@@ -95,6 +96,7 @@ export class ProjectScaffolder {
 
 		// Build project based on template
 		let buildSuccess = true;
+		let buildError: string | undefined;
 
 		if (template.name === 'default') {
 			progress('Creating dist-js directory...');
@@ -102,27 +104,36 @@ export class ProjectScaffolder {
 			fs.mkdirSync(distJsPath, { recursive: true });
 
 			progress('Building SSR with npm run build...');
-			buildSuccess = await runCommand(
+			const buildResult = await runCommandWithOutput(
 				pmCommands.run.split(' ')[0],
-				[...pmCommands.run.split(' ').slice(1), 'build'],
+				[...pmCommands.run.split(' ').slice(1), 'build-js'],
 				root,
 				verbose
 			);
+			buildSuccess = buildResult.success;
+			if (!buildSuccess) {
+				buildError = buildResult.stderr || buildResult.stdout || 'Build failed with unknown error';
+			}
 		} else if (template.name === 'spa') {
 			progress('Building SPA with npm run build...');
-			buildSuccess = await runCommand(
+			const buildResult = await runCommandWithOutput(
 				pmCommands.run.split(' ')[0],
-				[...pmCommands.run.split(' ').slice(1), 'build'],
+				[...pmCommands.run.split(' ').slice(1), 'build-js'],
 				root,
 				verbose
 			);
+			buildSuccess = buildResult.success;
+			if (!buildSuccess) {
+				buildError = buildResult.stderr || buildResult.stdout || 'Build failed with unknown error';
+			}
 		}
 
 		return {
 			success: true,
 			root,
 			installSuccess,
-			buildSuccess
+			buildSuccess,
+			buildError
 		};
 	}
 }

@@ -39,16 +39,19 @@ export function hydrate(Component: React.FunctionComponent & { ScriptName: strin
 
 			try {
 				props = JSON.parse(container.dataset.ssrProps);
-			} catch (e) {
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			} catch (e: unknown) {
 				console.error(`Could not parse hydrated JSON props for container ${container}`);
 			}
 
-			// eslint-disable-next-line no-param-reassign
 			script.dataset.ddProcessed = 'true';
 			hydrateRoot(
 				container,
 				<ErrorBoundary
-					fallback={<span>Sorry, this part of the page encountered an error! It's been logged and will be investigated as soon as possible.</span>}
+					fallback={<span>
+						Sorry, this part of the page encountered an error!
+						It's been logged and will be investigated as soon as possible.
+					</span>}
 				>
 					<Component {...props} />
 				</ErrorBoundary>

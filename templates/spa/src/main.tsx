@@ -3,12 +3,12 @@ import { init, navigate } from './core/router';
 init();
 
 /**
- * Intercept all anchor tags and 
+ * Intercept all anchor tags and
  */
 document?.addEventListener('click', (event: MouseEvent) => {
 	if ((event.target as HTMLLinkElement).tagName === 'A') {
 		// Grab the real link attribute. The property `href` directly on the target will be the full URL
-		const href = (event.target as HTMLLinkElement).getAttribute("href");
+		const href = (event.target as HTMLLinkElement).getAttribute('href');
 
 		// Make sure there's a link
 		if (!href) {

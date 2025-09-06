@@ -64,42 +64,42 @@ export default function createAddLayoutMiddleware(layoutWrapper: LayoutWrapper) 
 	 * @param {object} headers - HTTP request headers
 	 * @param {function} next - When called, this function will execute the next step in the roads method chain
 	 */
-	const middleware: Middleware<StoreValsMiddleware.StoreValsContext> = 
+	const middleware: Middleware<StoreValsMiddleware.StoreValsContext> =
 		function addLayoutMiddleware(this: StoreValsMiddleware.StoreValsContext, method, url, body, headers, next) {
-		this.setTitle = (title: string) => {
-			this.storeVal(TITLE_KEY, title);
-		};
-
-		this.render = function reactRender(element: JSX.Element) {
-			return ReactDOMServer.renderToStaticMarkup(element);
-		};
-
-		return next().then((response) => {
-			let res = response;
-
-			if (!(res instanceof Response)) {
-				res = new Response(res);
-			}
-
-			if (this.getVal('ignoreLayout') || this.getVal('json')) {
-				return res;
-			}
-
-			let layoutData: Record<string, unknown> = { twLastUpdateTime };
-
-			if (this.getAllVals) {
-				layoutData = { 
-				twLastUpdateTime, 
-				host: headers?.host, 
-				loggedIn: this.getVal('loggedIn'), 
-				...this.getAllVals() 
+			this.setTitle = (title: string) => {
+				this.storeVal(TITLE_KEY, title);
 			};
-			}
 
-			res.body = layoutWrapper(res, layoutData, this);
-			return response;
-		});
-	};
+			this.render = function reactRender(element: JSX.Element) {
+				return ReactDOMServer.renderToStaticMarkup(element);
+			};
+
+			return next().then((response) => {
+				let res = response;
+
+				if (!(res instanceof Response)) {
+					res = new Response(res);
+				}
+
+				if (this.getVal('ignoreLayout') || this.getVal('json')) {
+					return res;
+				}
+
+				let layoutData: Record<string, unknown> = { twLastUpdateTime };
+
+				if (this.getAllVals) {
+					layoutData = {
+						twLastUpdateTime,
+						host: headers?.host,
+						loggedIn: this.getVal('loggedIn'),
+						...this.getAllVals()
+					};
+				}
+
+				res.body = layoutWrapper(res, layoutData, this);
+				return response;
+			});
+		};
 
 	return middleware;
 }

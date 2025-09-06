@@ -27,6 +27,12 @@ export function getPackageManagerCommands(pm: PackageManager): PackageManagerCom
 	}
 }
 
+export interface CommandResult {
+	success: boolean
+	stdout?: string
+	stderr?: string
+}
+
 export function runCommand(command: string, args: string[], cwd: string, verbose = false): Promise<boolean> {
 	return new Promise((resolve) => {
 		if (verbose) {
@@ -40,6 +46,41 @@ export function runCommand(command: string, args: string[], cwd: string, verbose
 
 		child.on('close', (code) => {
 			resolve(code === 0);
+		});
+	});
+}
+
+export function runCommandWithOutput(command: string, args: string[], cwd: string, verbose = false): Promise<CommandResult> {
+	return new Promise((resolve) => {
+		if (verbose) {
+			console.log(`\nRunning: ${command} ${args.join(' ')}`);
+		}
+		
+		let stdout = '';
+		let stderr = '';
+		
+		const child = spawn(command, args, {
+			cwd,
+			stdio: verbose ? 'inherit' : 'pipe',
+			shell: process.platform === 'win32'
+		});
+
+		if (!verbose && child.stdout && child.stderr) {
+			child.stdout.on('data', (data) => {
+				stdout += data.toString();
+			});
+			
+			child.stderr.on('data', (data) => {
+				stderr += data.toString();
+			});
+		}
+
+		child.on('close', (code) => {
+			resolve({
+				success: code === 0,
+				stdout: verbose ? undefined : stdout,
+				stderr: verbose ? undefined : stderr
+			});
 		});
 	});
 }

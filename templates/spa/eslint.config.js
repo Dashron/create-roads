@@ -42,7 +42,8 @@ export default [
 				Headers: 'readonly',
 				fetch: 'readonly',
 				Window: 'readonly',
-				URL: 'readonly'
+				URL: 'readonly',
+				HTMLLinkElement: 'readonly'
 			}
 		},
 		plugins: {
@@ -54,8 +55,7 @@ export default [
 			// TypeScript ESLint recommended rules (using new format)
 			...tseslint.configs['recommended'].rules,
 			// Custom rules from original config
-			'indent': 'off',
-			'@typescript-eslint/indent': [
+			indent: [
 				'error',
 				'tab',
 				{

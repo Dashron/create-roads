@@ -146,6 +146,10 @@ export default class CreateRoads extends Command {
 					this.showProgress('Project created successfully! 🎉', undefined, undefined, true);
 				} else if (result.installSuccess) {
 					this.showProgress('Project created, but build failed ⚠️', undefined, undefined, true);
+					if (result.buildError) {
+						this.log('\nBuild error output:');
+						this.log(result.buildError.trim());
+					}
 				} else {
 					this.showProgress('Project created, but dependency installation failed ⚠️', undefined, undefined, true);
 				}
@@ -173,10 +177,12 @@ export default class CreateRoads extends Command {
 
 	private showProgress(message: string, step?: number,
 		total?: number, force = false): void {
-		if (!this.verbose && !force) {
+		// Always show step progress (1/6, 2/6 format), but respect verbose for other messages
+		const hasStepInfo = step && total;
+		if (!this.verbose && !force && !hasStepInfo) {
 			return;
 		}
-		const prefix = step && total ? `[${step}/${total}]` : '•';
+		const prefix = hasStepInfo ? `[${step}/${total}]` : '•';
 		this.log(`${prefix} ${message}`);
 	}
 

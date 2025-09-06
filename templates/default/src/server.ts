@@ -74,7 +74,8 @@ app.set('etag', false);
 app.use(express.raw({ type: '*/*' }));
 app.use(roadsExpressMiddleware(road));
 
-app.use((error: Error, req: Express.Request, res: Express.Response, _next: Express.NextFunction) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+app.use((error: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
 	console.error(error, { path: req.path, method: req.method });
 
 	res.statusCode = 500;
@@ -83,5 +84,5 @@ app.use((error: Error, req: Express.Request, res: Express.Response, _next: Expre
 
 // Start the server
 app.listen(8080 /*config.port*/, () => {
-	console.log('server started', { path: 'N/A', method: 'N/A' });
+	console.log('Server started at http://localhost:8080');
 });

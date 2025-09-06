@@ -11,7 +11,9 @@ export interface RenderInteractiveProps<P> {
 
 export type InteractiveComponent<ComponentProps> = React.FC<ComponentProps> & { URLPath: string; ScriptName: string };
 
-export function RenderInteractive<P>({ containerID, component, props, className, includeErrorBoundary = true }: RenderInteractiveProps<P>) {
+export function RenderInteractive<P>({
+	containerID, component, props, className, includeErrorBoundary = true
+}: RenderInteractiveProps<P>) {
 	// we need the window to make sure we're running in the browser
 	// but the extra check for process makes sure we're not in a test environment
 	if (typeof window !== 'undefined' && typeof process === 'undefined') {
@@ -27,7 +29,8 @@ export function RenderInteractive<P>({ containerID, component, props, className,
 			<ErrorBoundary
 				fallback={
 					<div id={containerID} className={className}>
-						Sorry, this part of the page encountered an error! It's been logged and will be investigated as soon as possible.
+						Sorry, this part of the page encountered an error!
+						It's been logged and will be investigated as soon as possible.
 					</div>
 				}
 			>
@@ -46,7 +49,13 @@ export function RenderInteractive<P>({ containerID, component, props, className,
 			<span
 				className="hidden"
 				dangerouslySetInnerHTML={{
-					__html: `<script type="module" data-dd-hydration="${containerID}" data-dd-component="${component.ScriptName}" data-dd-processed="false" src="/static/js/${component.URLPath}.client.js"></script>`
+					__html: `<script type="module" data-dd-hydration="${
+						containerID
+					}" data-dd-component="${
+						component.ScriptName
+					}" data-dd-processed="false" src="/static/js/${
+						component.URLPath
+					}.client.js"></script>`
 				}}
 			></span>
 		</>

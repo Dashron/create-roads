@@ -24,7 +24,7 @@ const TITLE_KEY = 'page-title';
   */
 export function addRoutes(router: RouterMiddleware.Router<StoreValsMiddleware.StoreValsContext>): void {
 	staticRoutes.register(router);
-	
+
 	router.addRoute('GET', '/', async function () {
 		console.log('get root');
 		return new ReactResponse(<Home />);

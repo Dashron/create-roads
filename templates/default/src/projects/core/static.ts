@@ -1,13 +1,13 @@
 import * as fs from 'fs';
 
 import { glob } from 'glob';
-import { 
-	staticPathRoot, 
-	staticUrlRoot, 
-	returnFile, 
-	getReactUrl, 
-	getReactBuildPath, 
-	projectRoute 
+import {
+	staticPathRoot,
+	staticUrlRoot,
+	returnFile,
+	getReactUrl,
+	getReactBuildPath,
+	projectRoute
 } from './staticUtil.js';
 import { RouterMiddleware, StoreValsMiddleware, ModifiedSinceMiddleware } from 'roads';
 
@@ -91,7 +91,7 @@ ESBUILD_CHUNK_FILES.forEach((filename) => {
 });
 
 export const register = function register(
-	router: RouterMiddleware.Router<StoreValsMiddleware.StoreValsContext & 
+	router: RouterMiddleware.Router<StoreValsMiddleware.StoreValsContext &
 		ModifiedSinceMiddleware.ModifiedSinceContext>
 ) {
 	Object.keys(STATIC_FILES).forEach((key: keyof typeof STATIC_FILES) => {

@@ -1,10 +1,6 @@
-import * as React from 'react';
-
 import { createRoot, Root } from 'react-dom/client';
-import { Road, RoadsPJAX, RouterMiddleware, CookieMiddleware, attachCommonMiddleware } from 'roads';
+import { Road, RouterMiddleware, CookieMiddleware, attachCommonMiddleware } from 'roads';
 import { addRoutes } from '../pages/routes';
-
-import { NotFoundComponent } from '../pages/components/notFound';
 
 let root: Root;
 let road: Road;
@@ -13,24 +9,24 @@ let road: Road;
  * Move the page to a new URL, and render the content for that page.
  */
 export async function navigate(urlPath: string) {
-	const content = document.getElementById("content");
+	const content = document.getElementById('content');
 
-	if (!content) { 
+	if (!content) {
 		throw new Error('Content element not found');
 	}
 
-	window.history.pushState({},"", urlPath);
+	window.history.pushState({},'', urlPath);
 	renderPath(window.location.pathname);
 }
 
 /**
- * 
+ *
  */
 export function init() {
 	road = new Road();
-	const content = document.getElementById("content");
+	const content = document.getElementById('content');
 
-	if (!content) { 
+	if (!content) {
 		throw new Error('Content element not found');
 	}
 
@@ -40,7 +36,7 @@ export function init() {
 		console.log(`fake ${  method  } request to...`, url);
 		return next();
 	});
-	
+
 	attachCommonMiddleware(road);
 	road.use(CookieMiddleware.buildClientMiddleware(document));
 	const router = new RouterMiddleware.Router(road);
@@ -49,15 +45,16 @@ export function init() {
 	/**
 	 * Handle the back button
 	 */
-	window.addEventListener("popstate", (e) => {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	window.addEventListener('popstate', (e) => {
 		renderPath(window.location.pathname);
 	});
 }
 
 /**
- * 
- * @param path 
- * @returns 
+ *
+ * @param path
+ * @returns
  */
 export async function renderPath(path: string) {
 	return road.request('GET', path).then((response) => {
