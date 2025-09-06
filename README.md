@@ -47,26 +47,26 @@ Both templates use roads for server side routing and express as a safe wrapper t
 
 ```bash
 # Create a new SSR project
-create-roads my-ssr-app
+npm create roads@latest my-ssr-app
 
 # Create a new SPA project
-create-roads my-spa-app --template spa
+npm create roads@latest --template spa
 ```
 
 ### Advanced Options
 
 ```bash
 # Specify template and package manager
-create-roads my-app --template spa --pm yarn
+npm create roads@latest my-app --template spa --pm yarn
 
 # Skip dependency installation
-create-roads my-app --skip-install
+npm create roads@latest my-app --skip-install
 
 # Show help
-create-roads --help
+npm create roads@latest --help
 
 # Show version
-create-roads --version
+npm create roads@latest --version
 ```
 
 ### Available Options
