@@ -10,12 +10,14 @@
     "@types/react-dom": "^19.0.4",
     "@typescript-eslint/eslint-plugin": "^8.42.0",
     "@typescript-eslint/parser": "^8.42.0",
+    "@vitest/coverage-v8": "^2.1.8",
     "esbuild": "0.25.0",
     "eslint": "^9.34.0",
     "glob": "^11.0.1",
     "jsonwebtoken": "^9.0.2",
     "tailwindcss": "^4.1.8",
-    "tsc-watch": "^7.1.1"
+    "tsc-watch": "^7.1.1",
+    "vitest": "^2.1.8"
   },
   "dependencies": {
     "@types/express": "^5.0.1",
@@ -36,7 +38,10 @@
     "build-css": "npx @tailwindcss/cli -i ./src/css/input.css -o ./public/css/main.css -c ./tailwind.config.js",
     "watch-css": "npx @tailwindcss/cli -i ./src/css/input.css -o ./public/css/main.css  -c ./tailwind.config.js --watch",
     "lint": "eslint src/ --ext .js,.ts,.tsx",
-    "lint:fix": "eslint src/ --ext .js,.ts,.tsx --fix"
+    "lint:fix": "eslint src/ --ext .js,.ts,.tsx --fix",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage"
   },
   "type": "module",
   "license": "MIT"
