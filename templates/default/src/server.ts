@@ -16,6 +16,7 @@ import { LayoutComponent } from './projects/example/components/layout.js';
 import * as ReactDOMServer from 'react-dom/server';
 import { addRoutes } from './projects/example/routes.js';
 import { buildCSRFMiddleware, CSRFContext } from './middleware/csrfMiddleware.js';
+import { buildAuthMiddleware, AuthContext } from './middleware/authMiddleware.js';
 import express from 'express';
 import { roadsExpressMiddleware } from './middleware/roadsExpressMiddleware.js';
 
@@ -31,7 +32,7 @@ road.use(function (method, url, body, headers, next) {
 attachCommonMiddleware(road);
 road.use(CookieMiddleware.serverMiddleware);
 road.use(
-	addLayout(function layout(body: ReactResponse, data, context: CSRFContext) {
+	addLayout(function layout(body: ReactResponse, data, context: CSRFContext & AuthContext) {
 		try {
 			return `<!DOCTYPE html>\n${ReactDOMServer.renderToStaticMarkup(
 				LayoutComponent({
@@ -64,6 +65,7 @@ road.use(
 	})
 );
 
+road.use(buildAuthMiddleware('SecreTConfigMeTODO', 'session'));
 road.use(buildCSRFMiddleware('SecreTConfigMeTODO', 'csrf_token'));
 
 const router = new RouterMiddleware.Router(road);
